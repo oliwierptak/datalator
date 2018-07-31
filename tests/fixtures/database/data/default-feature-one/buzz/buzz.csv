@@ -1,0 +1,4 @@
+id,value,datetime
+1,Buzz,NOW()
+2,Buzz Buzz,2010-10-10 10:00:00
+3,Lorem Ipsum,NULL

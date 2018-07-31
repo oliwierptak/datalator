@@ -1,0 +1,45 @@
+{
+    "name": "datalator/datalator",
+    "description": "Datalator: A database populator. Library to manage and populate test databases",
+    "type": "library",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": "^7.1",
+        "doctrine/dbal": "^2.7",
+        "symfony/finder": "^4.0",
+        "symfony/console": "^4.1",
+        "monolog/monolog": "^1.23"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.0",
+        "everon/coding-standard": "^1.0",
+        "popo/generator": "^1.0",
+        "symfony/process": "^4.0",
+        "symfony/var-dumper": "^4.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Datalator\\": "src/Datalator",
+            "Datalator\\Popo\\": "src/Popo"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\Datalator\\": "tests/Datalator",
+            "Tests\\DatalatorStub\\": "tests/Stub"
+        }
+    },
+    "scripts-descriptions": {
+        "datalator": "Run Datalator command"
+    },
+    "bin": [
+        "bin/datalator"
+    ],
+    "scripts": {
+        "post-autoload-dump": [
+            "chmod +x bin/datalator",
+            "vendor/bin/cs-setup"
+        ]
+    }
+}

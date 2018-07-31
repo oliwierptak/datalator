@@ -1,0 +1,4 @@
+id,foo_one_key,foo_one_value,bar_id
+NULL,foo-one,Foo One,NULL
+NULL,foo-one-lorem,Lorem One,NULL
+NULL,foo-one-lorem-ipsum,Lorem Ipsum One,NULL

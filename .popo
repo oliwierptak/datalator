@@ -1,0 +1,13 @@
+[popo]
+schema = popo/
+template = vendor/popo/generator/templates/
+output = src/Datalator/Popo/
+namespace = Datalator\Popo
+extension = .php
+
+[dto]
+schema = dto
+template = vendor/popo/generator/templates/
+output = src/Datalator/Popo/
+namespace = Datalator\Popo
+extension = .php

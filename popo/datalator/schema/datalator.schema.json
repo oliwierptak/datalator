@@ -1,0 +1,161 @@
+[
+  {
+    "name": "LoaderConfigurator",
+    "schema": [
+      {
+        "name": "schema",
+        "type": "string",
+        "default": "default"
+      },
+      {
+        "name": "data",
+        "type": "string",
+        "default": "default"
+      },
+      {
+        "name": "dataLoaderType",
+        "type": "string",
+        "default": "csv"
+      },
+      {
+        "name": "schemaPath",
+        "type": "string",
+        "default": "schema/"
+      },
+      {
+        "name": "dataPath",
+        "type": "string",
+        "default": "data/"
+      },
+      {
+        "name": "modules",
+        "type": "array",
+        "default": []
+      }
+    ]
+  },
+  {
+    "name": "ModuleConfigurator",
+    "schema": [
+      {
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "name": "tables",
+        "type": "array",
+        "default": []
+      }
+    ]
+  },
+  {
+    "name": "ModuleTable",
+    "schema": [
+      {
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "name": "sql",
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "name": "SchemaConfigurator",
+    "schema": [
+      {
+        "name": "databaseConfigurator",
+        "type": "\\Datalator\\Popo\\DatabaseConfigurator"
+      },
+      {
+        "name": "schemaName",
+        "type": "string"
+      },
+      {
+        "name": "sqlCreate",
+        "type": "string"
+      },
+      {
+        "name": "sqlDrop",
+        "type": "string"
+      },
+      {
+        "name": "loadedModules",
+        "type": "array",
+        "default": []
+      }
+    ]
+  },
+  {
+    "name": "DatabaseConfigurator",
+    "schema": [
+      {
+        "name": "connection",
+        "type": "\\Datalator\\Popo\\DatabaseConnectionConfigurator"
+      },
+      {
+        "name": "modules",
+        "type": "array",
+        "default": []
+      }
+    ]
+  },
+  {
+    "name": "DatabaseConnectionConfigurator",
+    "schema": [
+      {
+        "name": "driver",
+        "type": "string",
+        "default": "mysql"
+      },
+      {
+        "name": "dbname",
+        "type": "string"
+      },
+      {
+        "name": "host",
+        "type": "string"
+      },
+      {
+        "name": "user",
+        "type": "string"
+      },
+      {
+        "name": "password",
+        "type": "string"
+      },
+      {
+        "name": "port",
+        "type": "int"
+      }
+    ]
+  },
+  {
+    "name": "LoggerConfigurator",
+    "schema": [
+      {
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "name": "channels",
+        "type": "array",
+        "docblock": "\\Datalator\\Popo\\LoggerChannel[]"
+      }
+    ]
+  },
+  {
+    "name": "LoggerChannel",
+    "schema": [
+      {
+        "name": "logLevel",
+        "type": "int"
+      },
+      {
+        "name": "logFile",
+        "type": "string"
+      }
+    ]
+  }
+]

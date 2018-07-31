@@ -1,0 +1,4 @@
+id,foo_three_key,foo_three_value,bar_id
+NULL,foo-three,Foo Three,3
+NULL,foo-three-lorem,Lorem Three,3
+NULL,foo-three-lorem-ipsum,Lorem Ipsum Three,3

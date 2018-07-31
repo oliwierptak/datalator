@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<ruleset name="EveronProject">
+    <exclude-pattern>*/tests/App/*</exclude-pattern>
+
+    <rule ref="Everon" />
+    <rule ref="Everon.Files.TypeNameMatchesFileName">
+        <properties>
+            <property name="rootNamespaces" type="array"
+                      value="
+                      src/Datalator=>Datalator,
+                      tests/Datalator=>Tests\Datalator
+                    "/>
+            <property name="skipDirs" type="array"
+                      value="src/Datalator/Popo"/>
+            <property name="extensions" type="array"
+                      value="php"/>
+        </properties>
+    </rule>
+
+</ruleset>

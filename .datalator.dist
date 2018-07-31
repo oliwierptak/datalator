@@ -1,0 +1,8 @@
+; configure and rename this file to .datalator and run vendor/bin/datalator
+schema = default
+data = default
+schemaPath = tests/fixtures/database/schema/
+dataPath = tests/fixtures/database/data/
+; all modules are loaded by default, you can select them manually here
+; modules[] = module1 ;
+; modules[] = module2 ;
