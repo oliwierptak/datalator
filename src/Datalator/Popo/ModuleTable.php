@@ -34,6 +34,14 @@ class ModuleTable
 );
 
     /**
+    * @var array
+    */
+    protected $collectionItems = array (
+  'name' => '',
+  'sql' => '',
+);
+
+    /**
      * @param string $property
      *
      * @return mixed|null
@@ -79,7 +87,18 @@ class ModuleTable
 
             if (isset($this->data[$key])) {
                 $value = $this->data[$key];
-                $data[$key] = $value;
+
+                if ($this->collectionItems[$key] !== '') {
+                    if (\is_array($value) && \class_exists($this->collectionItems[$key])) {
+                        foreach ($value as $popo) {
+                            if (\method_exists($popo, 'toArray')) {
+                                $data[$key][] = $popo->toArray();
+                            }
+                        }
+                    }
+                } else {
+                    $data[$key] = $value;
+                }
 
                 if (\is_object($value) && \method_exists($value, 'toArray')) {
                     $data[$key] = $value->toArray();
@@ -104,7 +123,19 @@ class ModuleTable
                 $result[$key] = $this->default[$key];
             }
             if (\array_key_exists($key, $data)) {
-                $result[$key] = $data[$key];
+                if ($this->collectionItems[$key] !== '') {
+                    if (\is_array($data[$key]) && \class_exists($this->collectionItems[$key])) {
+                        foreach ($data[$key] as $popoData) {
+                            $popo = new $this->collectionItems[$key]();
+                            if (\method_exists($popo, 'fromArray')) {
+                                $popo->fromArray($popoData);
+                            }
+                            $result[$key][] = $popo;
+                        }
+                    }
+                } else {
+                    $result[$key] = $data[$key];
+                }
             }
 
             if (\is_array($result[$key]) && \class_exists($type)) {
@@ -135,6 +166,26 @@ class ModuleTable
                 $property
             ));
         }
+    }
+
+    /**
+     * @param string $propertyName
+     * @param mixed $value
+     *
+     * @return void
+     */
+    protected function addCollectionItem(string $propertyName, $value): void
+    {
+        $type = \trim(\strtolower($this->propertyMapping[$propertyName]->getType()));
+        $collection = $this->popoGetValue($propertyName) ?? [];
+
+        if (!\is_array($collection) || $type !== 'array') {
+            throw new \InvalidArgumentException('Cannot add item to non array type: ' . $propertyName);
+        }
+
+        $collection[] = $value;
+
+        $this->popoSetValue($propertyName, $collection);
     }
 
     
@@ -202,4 +253,6 @@ class ModuleTable
         return (string)$this->popoGetValue('sql');
     }
 
+
+    
 }
