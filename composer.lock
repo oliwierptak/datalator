@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f3d7f23871850ae8d93b9fa4e3a9dfc1",
+    "content-hash": "2d08b36c92ab010ef9fa840f4dfe7728",
     "packages": [
         {
             "name": "doctrine/cache",
@@ -1332,12 +1332,17 @@
         },
         {
             "name": "popo/generator",
-            "version": "dev-master",
+            "version": "1.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/oliwierptak/popo.git",
+                "reference": "e727668193ea278513e2aa70a9ffe494c5214985"
+            },
             "dist": {
-                "type": "path",
-                "url": "../popo",
-                "reference": "7972925a141ef1632a9df2df2e5a60c2331b44fe",
-                "shasum": null
+                "type": "zip",
+                "url": "https://api.github.com/repos/oliwierptak/popo/zipball/e727668193ea278513e2aa70a9ffe494c5214985",
+                "reference": "e727668193ea278513e2aa70a9ffe494c5214985",
+                "shasum": ""
             },
             "require": {
                 "php": "^7.1",
@@ -1358,21 +1363,7 @@
                     "Popo\\": "src/Popo"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Tests\\App\\": "tests/App/",
-                    "Tests\\Popo\\": "tests/Popo/",
-                    "Tests\\Buzz\\": "tests/fixtures/bundles/buzz/src/Buzz/",
-                    "Tests\\Foo\\": "tests/fixtures/bundles/foo/src/Foo/",
-                    "Tests\\FooBar\\": "tests/fixtures/bundles/foo-bar/src/FooBar/"
-                }
-            },
-            "scripts": {
-                "post-autoload-dump": [
-                    "chmod +x bin/popo",
-                    "vendor/bin/cs-setup"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -1382,9 +1373,7 @@
                 }
             ],
             "description": "Plain Old PHP Object (POPO) / Data Transfer Object (TDO) Generator. Convert JSON to PHP class.",
-            "transport-options": {
-                "symlink": false
-            }
+            "time": "2018-08-04T09:01:58+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
@@ -2311,9 +2300,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "popo/generator": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

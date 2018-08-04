@@ -20,7 +20,7 @@
     "require-dev": {
         "phpunit/phpunit": "^7.0",
         "everon/coding-standard": "^1.0",
-        "popo/generator": "@dev",
+        "popo/generator": "^1.0",
         "symfony/process": "^4.0",
         "symfony/var-dumper": "^4.1"
     },
@@ -47,14 +47,5 @@
             "chmod +x bin/datalator",
             "vendor/bin/cs-setup"
         ]
-    },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../popo/",
-            "options": {
-                "symlink": false
-            }
-        }
-    ]
+    }
 }
