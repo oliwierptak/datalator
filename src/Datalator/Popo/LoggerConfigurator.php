@@ -38,7 +38,7 @@ class LoggerConfigurator
     */
     protected $collectionItems = array (
   'name' => '',
-  'channels' => '',
+  'channels' => '\\Datalator\\Popo\\LoggerChannel',
 );
 
     /**
@@ -109,11 +109,6 @@ class LoggerConfigurator
         return $data;
     }
 
-    /**
-     * @param array $data
-     *
-     * @return \Datalator\Popo\LoggerConfigurator
-     */
     public function fromArray(array $data): \Datalator\Popo\LoggerConfigurator
     {
         $result = [];
@@ -123,15 +118,13 @@ class LoggerConfigurator
                 $result[$key] = $this->default[$key];
             }
             if (\array_key_exists($key, $data)) {
-                if ($this->collectionItems[$key] !== '') {
-                    if (\is_array($data[$key]) && \class_exists($this->collectionItems[$key])) {
-                        foreach ($data[$key] as $popoData) {
-                            $popo = new $this->collectionItems[$key]();
-                            if (\method_exists($popo, 'fromArray')) {
-                                $popo->fromArray($popoData);
-                            }
-                            $result[$key][] = $popo;
+                if ($this->isCollectionItem($key, $data)) {
+                    foreach ($data[$key] as $popoData) {
+                        $popo = new $this->collectionItems[$key]();
+                        if (\method_exists($popo, 'fromArray')) {
+                            $popo->fromArray($popoData);
                         }
+                        $result[$key][] = $popo;
                     }
                 } else {
                     $result[$key] = $data[$key];
@@ -150,6 +143,13 @@ class LoggerConfigurator
         $this->data = $result;
 
         return $this;
+    }
+
+    protected function isCollectionItem(string $key, array $data): bool
+    {
+        return $this->collectionItems[$key] !== '' &&
+            \is_array($data[$key]) &&
+            \class_exists($this->collectionItems[$key]);
     }
 
     /**
@@ -172,11 +172,12 @@ class LoggerConfigurator
      * @param string $propertyName
      * @param mixed $value
      *
+     * @throws \InvalidArgumentException
      * @return void
      */
     protected function addCollectionItem(string $propertyName, $value): void
     {
-        $type = \trim(\strtolower($this->propertyMapping[$propertyName]->getType()));
+        $type = \trim(\strtolower($this->propertyMapping[$propertyName]));
         $collection = $this->popoGetValue($propertyName) ?? [];
 
         if (!\is_array($collection) || $type !== 'array') {
@@ -256,13 +257,13 @@ class LoggerConfigurator
 
     
     /**
-     * @param  \Datalator\Popo\LoggerChannel[] $channelsItem
+     * @param  \Datalator\Popo\LoggerChannel[]\Datalator\Popo\LoggerChannel $channelsItem
      *
      * @return self \Datalator\Popo\LoggerChannel[]
      */
-    public function addChannelsItem(? $channelsItem): \Datalator\Popo\LoggerConfigurator
+    public function addChannel(\Datalator\Popo\LoggerChannel $item): \Datalator\Popo\LoggerConfigurator
     {
-        $this->addCollectionItem('channels', $channelsItem);
+        $this->addCollectionItem('channels', $item);
 
         return $this;
     }

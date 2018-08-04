@@ -58,7 +58,7 @@ class LoaderConfigurator
   'dataLoaderType' => '',
   'schemaPath' => '',
   'dataPath' => '',
-  'modules' => '',
+  'modules' => 'string',
 );
 
     /**
@@ -129,11 +129,6 @@ class LoaderConfigurator
         return $data;
     }
 
-    /**
-     * @param array $data
-     *
-     * @return \Datalator\Popo\LoaderConfigurator
-     */
     public function fromArray(array $data): \Datalator\Popo\LoaderConfigurator
     {
         $result = [];
@@ -143,15 +138,13 @@ class LoaderConfigurator
                 $result[$key] = $this->default[$key];
             }
             if (\array_key_exists($key, $data)) {
-                if ($this->collectionItems[$key] !== '') {
-                    if (\is_array($data[$key]) && \class_exists($this->collectionItems[$key])) {
-                        foreach ($data[$key] as $popoData) {
-                            $popo = new $this->collectionItems[$key]();
-                            if (\method_exists($popo, 'fromArray')) {
-                                $popo->fromArray($popoData);
-                            }
-                            $result[$key][] = $popo;
+                if ($this->isCollectionItem($key, $data)) {
+                    foreach ($data[$key] as $popoData) {
+                        $popo = new $this->collectionItems[$key]();
+                        if (\method_exists($popo, 'fromArray')) {
+                            $popo->fromArray($popoData);
                         }
+                        $result[$key][] = $popo;
                     }
                 } else {
                     $result[$key] = $data[$key];
@@ -170,6 +163,13 @@ class LoaderConfigurator
         $this->data = $result;
 
         return $this;
+    }
+
+    protected function isCollectionItem(string $key, array $data): bool
+    {
+        return $this->collectionItems[$key] !== '' &&
+            \is_array($data[$key]) &&
+            \class_exists($this->collectionItems[$key]);
     }
 
     /**
@@ -192,11 +192,12 @@ class LoaderConfigurator
      * @param string $propertyName
      * @param mixed $value
      *
+     * @throws \InvalidArgumentException
      * @return void
      */
     protected function addCollectionItem(string $propertyName, $value): void
     {
-        $type = \trim(\strtolower($this->propertyMapping[$propertyName]->getType()));
+        $type = \trim(\strtolower($this->propertyMapping[$propertyName]));
         $collection = $this->popoGetValue($propertyName) ?? [];
 
         if (!\is_array($collection) || $type !== 'array') {
@@ -404,13 +405,13 @@ class LoaderConfigurator
 
     
     /**
-     * @param  $modulesItem
+     * @param string $modulesItem
      *
      * @return self
      */
-    public function addModulesItem(? $modulesItem): \Datalator\Popo\LoaderConfigurator
+    public function addModule(string $item): \Datalator\Popo\LoaderConfigurator
     {
-        $this->addCollectionItem('modules', $modulesItem);
+        $this->addCollectionItem('modules', $item);
 
         return $this;
     }

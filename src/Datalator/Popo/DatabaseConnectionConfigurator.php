@@ -125,11 +125,6 @@ class DatabaseConnectionConfigurator
         return $data;
     }
 
-    /**
-     * @param array $data
-     *
-     * @return \Datalator\Popo\DatabaseConnectionConfigurator
-     */
     public function fromArray(array $data): \Datalator\Popo\DatabaseConnectionConfigurator
     {
         $result = [];
@@ -139,15 +134,13 @@ class DatabaseConnectionConfigurator
                 $result[$key] = $this->default[$key];
             }
             if (\array_key_exists($key, $data)) {
-                if ($this->collectionItems[$key] !== '') {
-                    if (\is_array($data[$key]) && \class_exists($this->collectionItems[$key])) {
-                        foreach ($data[$key] as $popoData) {
-                            $popo = new $this->collectionItems[$key]();
-                            if (\method_exists($popo, 'fromArray')) {
-                                $popo->fromArray($popoData);
-                            }
-                            $result[$key][] = $popo;
+                if ($this->isCollectionItem($key, $data)) {
+                    foreach ($data[$key] as $popoData) {
+                        $popo = new $this->collectionItems[$key]();
+                        if (\method_exists($popo, 'fromArray')) {
+                            $popo->fromArray($popoData);
                         }
+                        $result[$key][] = $popo;
                     }
                 } else {
                     $result[$key] = $data[$key];
@@ -166,6 +159,13 @@ class DatabaseConnectionConfigurator
         $this->data = $result;
 
         return $this;
+    }
+
+    protected function isCollectionItem(string $key, array $data): bool
+    {
+        return $this->collectionItems[$key] !== '' &&
+            \is_array($data[$key]) &&
+            \class_exists($this->collectionItems[$key]);
     }
 
     /**
@@ -188,11 +188,12 @@ class DatabaseConnectionConfigurator
      * @param string $propertyName
      * @param mixed $value
      *
+     * @throws \InvalidArgumentException
      * @return void
      */
     protected function addCollectionItem(string $propertyName, $value): void
     {
-        $type = \trim(\strtolower($this->propertyMapping[$propertyName]->getType()));
+        $type = \trim(\strtolower($this->propertyMapping[$propertyName]));
         $collection = $this->popoGetValue($propertyName) ?? [];
 
         if (!\is_array($collection) || $type !== 'array') {

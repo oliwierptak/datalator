@@ -30,6 +30,8 @@
       {
         "name": "modules",
         "type": "array",
+        "collectionItem": "string",
+        "singular": "module",
         "default": []
       }
     ]
@@ -44,6 +46,8 @@
       {
         "name": "tables",
         "type": "array",
+        "collectionItem": "string",
+        "singular": "table",
         "default": []
       }
     ]
@@ -83,6 +87,8 @@
       {
         "name": "loadedModules",
         "type": "array",
+        "collectionItem": "string",
+        "singular": "loadedModule",
         "default": []
       }
     ]
@@ -97,6 +103,8 @@
       {
         "name": "modules",
         "type": "array",
+        "collectionItem": "string",
+        "singular": "module",
         "default": []
       }
     ]
@@ -141,6 +149,8 @@
       {
         "name": "channels",
         "type": "array",
+        "collectionItem": "\\Datalator\\Popo\\LoggerChannel",
+        "singular": "channel",
         "docblock": "\\Datalator\\Popo\\LoggerChannel[]"
       }
     ]

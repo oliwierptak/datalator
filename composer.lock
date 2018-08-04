@@ -1336,7 +1336,7 @@
             "dist": {
                 "type": "path",
                 "url": "../popo",
-                "reference": "3a47c6049f1a4318b52d2d893d3d46f8f28ad459",
+                "reference": "7972925a141ef1632a9df2df2e5a60c2331b44fe",
                 "shasum": null
             },
             "require": {
