@@ -147,7 +147,6 @@ class DatalatorFacadeTest extends TestCase
             ->setQueryColumn('foo_one_key');
 
         $value = $facade->readFromSchema($configurator, $readerConfigurator);
-        //$csvValue = $facade->readFromData($configurator, $readerConfigurator);
 
         $this->assertEquals('foo-one', $value->getSchemaValue());
     }

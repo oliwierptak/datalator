@@ -43,12 +43,6 @@ class DatalatorFacade implements DatalatorFacadeInterface
             ->drop();
     }
 
-    /**
-     * @param \Datalator\Popo\LoaderConfigurator $configurator
-     * @param \Datalator\Popo\LoaderConfigurator[] $importConfiguratorCollection
-     *
-     * @return void
-     */
     public function import(LoaderConfigurator $configurator, array $importConfiguratorCollection): void
     {
         $this->getFactory()

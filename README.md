@@ -45,6 +45,32 @@ Or you can specify all options from the command line.
   populate  Populate the test database. The database will created / dropped if needed.
  ```
 
+## Data Reader
+To read data from the database of the fixture file, use `readFromSchema` and `readFromData` methods.
+
+```
+$readerConfigurator = (new ReaderConfigurator())
+    ->setSource('foo_one')
+    ->setIdentityValue(1)
+    ->setQueryColumn('foo_one_key');
+
+$value = $facade->readFromSchema($configurator, $readerConfigurator);
+
+$this->assertEquals('foo-one', $value->getSchemaValue());
+```
+
+
+```
+$readerConfigurator = (new ReaderConfigurator())
+    ->setSource('foo_one')
+    ->setIdentityValue('foo-one')
+    ->setIdentityColumn('foo_one_key')
+    ->setQueryColumn('foo_one_value');
+
+$value = $facade->readFromData($configurator, $readerConfigurator);
+
+$this->assertEquals('Foo One', $value->getDataValue());
+```
 
 
 ## Data Sources
