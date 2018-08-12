@@ -23,6 +23,40 @@ protected function setUp()
 }
 ```
 
+#### Test Populator
+TestPopulator is a helper class that provides interface to test database population.
+It is very easy and straightforward to use. 
+
+```
+interface TestPopulatorInterface
+{
+    public function create(): TestPopulatorInterface;
+
+    public function drop(): TestPopulatorInterface;
+
+    public function populate(): TestPopulatorInterface;
+
+    public function extendWith(LoaderConfigurator $configurator): TestPopulatorInterface;
+
+    public function importFrom(array $importConfiguratorCollection): TestPopulatorInterface;
+
+    public function useSchemaName(string $schemaName): TestPopulatorInterface;
+
+    public function useSchemaPath(string $schemaPath): TestPopulatorInterface;
+
+    public function useDataName(string $dataName): TestPopulatorInterface;
+
+    public function useDataPath(string $dataPath): TestPopulatorInterface;
+
+    public function useModules(array $modules): TestPopulatorInterface;
+
+    public function dumpConfiguratorInstance(): LoaderConfigurator;
+}
+```
+Note: `dumpConfiguratorInstance()` is useful if you want to extend or import other modules.
+See [DatalatorFacadeTest](tests/Datalator/DatalatorFacadeTest.php) for more examples.
+
+
 ### Configuration
 
 Example of `.datalator` configuration file.
@@ -44,9 +78,9 @@ Or you can specify all options from the command line.
   drop      Drop the test database if it exists.
   populate  Populate the test database. The database will created / dropped if needed.
  ```
-
+ 
 ## Data Reader
-To read data from the database of the fixture file, use `readFromSchema` and `readFromData` methods.
+To read data from the database or the fixture file, use `readFromSchema()` and `readFromData()` methods.
 
 ```
 $readerConfigurator = (new ReaderConfigurator())
