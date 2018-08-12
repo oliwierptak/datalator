@@ -71,28 +71,9 @@ class TablePopulator implements TablePopulatorInterface
         }
     }
 
-    /**
-     * @param array $data
-     *
-     * @throws \UnexpectedValueException
-     *
-     * @return array
-     */
-    protected function prepareRow(array $data): array
+    protected function prepareRow(array $row): array
     {
-        $dataCount = \count($data);
-        $columnCount = \count($this->dataSource->getColumns());
-
-        if ($dataCount !== $columnCount) {
-            throw new \UnexpectedValueException('Data and column count does not match');
-        }
-
-        $data = $this->remapValues($data);
-
-        $row = \array_combine(
-            $this->dataSource->getColumns(),
-            $data
-        );
+        $row = $this->remapValues($row);
 
         $escapedRow = [];
         foreach ($row as $name => $value) {

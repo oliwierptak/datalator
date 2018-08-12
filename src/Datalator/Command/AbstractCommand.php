@@ -122,7 +122,7 @@ abstract class AbstractCommand extends Command
         $config = [];
         $configFile = $dotPath . '.datalator';
         if (\is_file($configFile)) {
-            $config = \parse_ini_file($configFile, false) ?: [];
+            $config = \parse_ini_file($configFile, false) ?? [];
         }
 
         return $config;

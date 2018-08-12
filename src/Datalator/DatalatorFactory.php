@@ -19,6 +19,9 @@ use Datalator\Loader\Schema\SchemaLoaderInterface;
 use Datalator\Logger\LoggerFactory;
 use Datalator\Logger\LoggerFactoryInterface;
 use Datalator\Popo\LoaderConfigurator;
+use Datalator\Reader\CsvReader;
+use Datalator\Reader\DatabaseReader;
+use Datalator\Reader\ReaderInterface;
 use Psr\Log\LoggerInterface;
 
 class DatalatorFactory implements DatalatorFactoryInterface
@@ -59,6 +62,24 @@ class DatalatorFactory implements DatalatorFactoryInterface
     {
         return new CsvDataLoader(
             $this->createFileLoader()
+        );
+    }
+
+    public function createDatabaseReader(LoaderConfigurator $configurator): ReaderInterface
+    {
+        return new DatabaseReader(
+            $this->createSchemaLoader(),
+            $this->createLogger(),
+            $configurator
+        );
+    }
+
+    public function createCsvReader(LoaderConfigurator $configurator): ReaderInterface
+    {
+        return new CsvReader(
+            $this->createCsvDataLoader(),
+            $this->createLogger(),
+            $configurator
         );
     }
 

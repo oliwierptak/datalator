@@ -5,6 +5,8 @@ declare(strict_types = 1);
 namespace Datalator;
 
 use Datalator\Popo\LoaderConfigurator;
+use Datalator\Popo\ReaderConfigurator;
+use Datalator\Popo\ReaderValue;
 
 class DatalatorFacade implements DatalatorFacadeInterface
 {
@@ -59,5 +61,19 @@ class DatalatorFacade implements DatalatorFacadeInterface
         $this->getFactory()
             ->createDatabaseBuilder($configurator)
             ->populate();
+    }
+
+    public function readFromSchema(LoaderConfigurator $configurator, ReaderConfigurator $readerConfigurator): ReaderValue
+    {
+        return $this->getFactory()
+            ->createDatabaseReader($configurator)
+            ->read($readerConfigurator);
+    }
+
+    public function readFromData(LoaderConfigurator $configurator, ReaderConfigurator $readerConfigurator): ReaderValue
+    {
+        return $this->getFactory()
+            ->createCsvReader($configurator)
+            ->read($readerConfigurator);
     }
 }

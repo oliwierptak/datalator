@@ -167,5 +167,45 @@
         "type": "string"
       }
     ]
+  },
+  {
+    "name": "ReaderConfigurator",
+    "schema": [
+      {
+        "name": "source",
+        "type": "string"
+      },
+      {
+        "name": "identityValue",
+        "type": "mixed"
+      },
+      {
+        "name": "identityColumn",
+        "type": "string",
+        "default": "id"
+      },
+      {
+        "name": "queryValue",
+        "type": "string"
+      },
+      {
+        "name": "queryColumn",
+        "type": "string",
+        "default": "*"
+      }
+    ]
+  },
+  {
+    "name": "ReaderValue",
+    "schema": [
+      {
+        "name": "schemaValue",
+        "type": "mixed"
+      },
+      {
+        "name": "dataValue",
+        "type": "mixed"
+      }
+    ]
   }
 ]

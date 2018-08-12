@@ -9,6 +9,7 @@ use Datalator\Data\Csv\CsvDataLoader;
 use Datalator\Loader\Module\ModuleLoaderInterface;
 use Datalator\Loader\Schema\SchemaLoaderInterface;
 use Datalator\Popo\LoaderConfigurator;
+use Datalator\Reader\ReaderInterface;
 
 interface DatalatorFactoryInterface
 {
@@ -21,4 +22,8 @@ interface DatalatorFactoryInterface
     public function createModuleLoader(): ModuleLoaderInterface;
 
     public function createCsvDataLoader(): CsvDataLoader;
+
+    public function createDatabaseReader(LoaderConfigurator $configurator): ReaderInterface;
+
+    public function createCsvReader(LoaderConfigurator $configurator): ReaderInterface;
 }

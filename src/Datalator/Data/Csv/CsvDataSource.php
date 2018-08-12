@@ -25,6 +25,11 @@ class CsvDataSource implements DataSourceInterface
     protected $data;
 
     /**
+     * @var array
+     */
+    protected $columns;
+
+    /**
      * @var int
      */
     protected $loadedTimestamp;
@@ -37,11 +42,15 @@ class CsvDataSource implements DataSourceInterface
     public function getData(): array
     {
         $this->load();
-        $data = $this->data;
 
-        \array_shift($data);
+        return $this->data;
+    }
 
-        return $data;
+    public function getColumns(): array
+    {
+        $this->load();
+
+        return $this->columns;
     }
 
     public function isLoaded(): bool
@@ -58,21 +67,41 @@ class CsvDataSource implements DataSourceInterface
         return $this->name;
     }
 
-    public function getColumns(): array
-    {
-        $this->load();
-        $data = $this->data;
-
-        return \array_shift($data);
-    }
-
     protected function load(): void
     {
         if ($this->loadedTimestamp !== null) {
             return;
         }
 
-        $this->data = \array_map('str_getcsv', \file($this->csvFile->getPathname()));
+        $data = \array_map('str_getcsv', \file($this->csvFile->getPathname()));
+
+        $this->columns = \array_shift($data);
+        $this->data = \array_map([$this, 'prepareRow'], $data);
+
         $this->loadedTimestamp = \time();
+    }
+
+    /**
+     * @param array $data
+     *
+     * @throws \UnexpectedValueException
+     *
+     * @return array
+     */
+    protected function prepareRow(array $data): array
+    {
+        $dataCount = \count($data);
+        $columnCount = \count($this->columns);
+
+        if ($dataCount !== $columnCount) {
+            throw new \UnexpectedValueException('Data and column count does not match');
+        }
+
+        $row = \array_combine(
+            $this->columns,
+            $data
+        );
+
+        return $row;
     }
 }

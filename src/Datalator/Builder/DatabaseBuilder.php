@@ -119,10 +119,6 @@ class DatabaseBuilder implements DatabaseBuilderInterface
 
         foreach ($importConfiguratorCollection as $importConfigurator) {
             $schemaConfigurator = $this->schemaLoader->load($importConfigurator);
-            $schemaConfigurator->setDatabaseConfigurator(
-                $this->getSchemaConfigurator()->requireDatabaseConfigurator()
-            );
-
             $data = $this->dataLoader->load($importConfigurator);
 
             $this->populateDatabase(

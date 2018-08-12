@@ -43,7 +43,7 @@ abstract class AbstractDataLoader implements DataLoaderInterface
     /**
      * @param \Datalator\Popo\LoaderConfigurator $configurator
      *
-     * @return array|\Symfony\Component\Finder\SplFileInfo[]
+     * @return \Symfony\Component\Finder\SplFileInfo[]
      */
     protected function getFileCollection(LoaderConfigurator $configurator): array
     {
