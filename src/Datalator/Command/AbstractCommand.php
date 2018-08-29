@@ -99,15 +99,20 @@ abstract class AbstractCommand extends Command
         }
         $path = \rtrim($path, \DIRECTORY_SEPARATOR) . \DIRECTORY_SEPARATOR;
 
+        $schemaName = $input->getOption(static::OPTION_SCHEMA);
+        $dataName = $input->getOption(static::OPTION_DATA);
+        $schemaPath = $path . \rtrim($input->getOption(static::OPTION_SCHEMA_PATH), \DIRECTORY_SEPARATOR) . \DIRECTORY_SEPARATOR;
+        $dataPath = $path . \rtrim($input->getOption(static::OPTION_DATA_PATH), \DIRECTORY_SEPARATOR) . \DIRECTORY_SEPARATOR;
+
         $arguments = [
-            'schema' => $input->getOption(static::OPTION_SCHEMA),
-            'data' => $input->getOption(static::OPTION_DATA),
-            'schemaPath' => $path . \trim($input->getOption(static::OPTION_SCHEMA_PATH)),
-            'dataPath' => $path . \trim($input->getOption(static::OPTION_DATA_PATH)),
+            'schema' => $schemaName,
+            'data' => $dataName,
+            'schemaPath' => $schemaPath,
+            'dataPath' => $dataPath,
             'modules' => $input->getOption(static::OPTION_MODULES),
         ];
 
-        $result = \array_merge($arguments, $config);
+        $result = \array_merge($config, $arguments);
 
         return $result;
     }
