@@ -1,1 +1,1 @@
-DROP DATABASE IF EXISTS `test_database_feature_one`;
+DROP DATABASE IF EXISTS `%s`;
