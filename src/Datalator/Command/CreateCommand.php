@@ -15,7 +15,6 @@ class CreateCommand extends AbstractCommand
     protected function executeCommand(InputInterface $input, OutputInterface $output): ?int
     {
         $configurator = $this->buildConfigurator($input);
-
         $this->getFacade()->create($configurator);
 
         return 0;
