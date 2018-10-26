@@ -13,7 +13,7 @@ class ReaderValue
      * @var array
      */
     protected $data = array (
-  'schemaValue' => NULL,
+  'databaseValue' => NULL,
   'dataValue' => NULL,
 );
 
@@ -21,7 +21,7 @@ class ReaderValue
      * @var array
      */
     protected $default = array (
-  'schemaValue' => NULL,
+  'databaseValue' => NULL,
   'dataValue' => NULL,
 );
 
@@ -29,7 +29,7 @@ class ReaderValue
     * @var array
     */
     protected $propertyMapping = array (
-  'schemaValue' => 'mixed',
+  'databaseValue' => 'mixed',
   'dataValue' => 'mixed',
 );
 
@@ -37,7 +37,7 @@ class ReaderValue
     * @var array
     */
     protected $collectionItems = array (
-  'schemaValue' => '',
+  'databaseValue' => '',
   'dataValue' => '',
 );
 
@@ -193,19 +193,19 @@ class ReaderValue
     /**
      * @return mixed|null
      */
-    public function getSchemaValue()
+    public function getDatabaseValue()
     {
-        return $this->popoGetValue('schemaValue');
+        return $this->popoGetValue('databaseValue');
     }
 
     /**
-     * @param mixed|null $schemaValue
+     * @param mixed|null $databaseValue
      *
      * @return self
      */
-    public function setSchemaValue($schemaValue): \Datalator\Popo\ReaderValue
+    public function setDatabaseValue($databaseValue): \Datalator\Popo\ReaderValue
     {
-        $this->popoSetValue('schemaValue', $schemaValue);
+        $this->popoSetValue('databaseValue', $databaseValue);
 
         return $this;
     }
@@ -215,11 +215,11 @@ class ReaderValue
      *
      * @return mixed
      */
-    public function requireSchemaValue()
+    public function requireDatabaseValue()
     {
-        $this->assertPropertyValue('schemaValue');
+        $this->assertPropertyValue('databaseValue');
 
-        return $this->popoGetValue('schemaValue');
+        return $this->popoGetValue('databaseValue');
     }
 
     /**

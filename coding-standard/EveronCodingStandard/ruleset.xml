@@ -8,10 +8,12 @@
             <property name="rootNamespaces" type="array"
                       value="
                       src/Datalator=>Datalator,
-                      tests/Datalator=>Tests\Datalator
+                      src/Datalator/Popo=>Datalator\Popo,
+                      tests/Datalator=>Tests\Datalator,
+                      tests/Stub=>Tests\DatalatorStub
                     "/>
             <property name="skipDirs" type="array"
-                      value="src/Datalator/Popo"/>
+                      value="src/Datalator/Popo/"/>
             <property name="extensions" type="array"
                       value="php"/>
         </properties>

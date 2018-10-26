@@ -64,9 +64,9 @@ class DatabaseReader implements ReaderInterface
         }
 
         if ($configurator->getQueryColumn() === '*') {
-            $value->setSchemaValue($data);
+            $value->setDatabaseValue($data);
         } else {
-            $value->setSchemaValue($data[$configurator->getQueryColumn()]);
+            $value->setDatabaseValue($data[$configurator->getQueryColumn()]);
         }
 
         return $value;

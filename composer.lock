@@ -592,16 +592,16 @@
         },
         {
             "name": "everon/coding-standard",
-            "version": "1.0.3",
+            "version": "1.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/oliwierptak/coding-standard.git",
-                "reference": "8d308c922ab905bd970ba28cbf5a5857b954990f"
+                "reference": "5baa60a917612a09e35e2e810ef4a3993f55afc2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/oliwierptak/coding-standard/zipball/8d308c922ab905bd970ba28cbf5a5857b954990f",
-                "reference": "8d308c922ab905bd970ba28cbf5a5857b954990f",
+                "url": "https://api.github.com/repos/oliwierptak/coding-standard/zipball/5baa60a917612a09e35e2e810ef4a3993f55afc2",
+                "reference": "5baa60a917612a09e35e2e810ef4a3993f55afc2",
                 "shasum": ""
             },
             "require": {
@@ -630,7 +630,7 @@
                 }
             ],
             "description": "Everon Coding Standards",
-            "time": "2018-07-06T17:40:11+00:00"
+            "time": "2018-10-26T18:14:02+00:00"
         },
         {
             "name": "myclabs/deep-copy",

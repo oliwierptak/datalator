@@ -130,6 +130,13 @@ class DatabaseBuilder implements DatabaseBuilderInterface
         $this->info('Imported');
     }
 
+    public function databaseExists(string $name): bool
+    {
+        return $this
+            ->buildDatabasePopulator()
+            ->databaseExists($name);
+    }
+
     protected function info(string $info): void
     {
         $this->logger->info($this->formatInfo($info));

@@ -93,6 +93,18 @@ class DatabasePopulator implements DatabasePopulatorInterface
         $this->info('Populated database');
     }
 
+    public function databaseExists(string $name): bool
+    {
+        try {
+            return \in_array(
+                $name,
+                $this->getConnection()->getSchemaManager()->listDatabases()
+            );
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
+
     /**
      * @param string $moduleName
      * @param string $tableName
@@ -134,18 +146,6 @@ class DatabasePopulator implements DatabasePopulatorInterface
     protected function getConnection(): Connection
     {
         return $this->databaseConnection;
-    }
-
-    protected function databaseExists(string $name): bool
-    {
-        try {
-            return \in_array(
-                $name,
-                $this->getConnection()->getSchemaManager()->listDatabases()
-            );
-        } catch (\Throwable $e) {
-            return false;
-        }
     }
 
     protected function info(string $info): void

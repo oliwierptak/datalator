@@ -57,7 +57,7 @@ class DatalatorFacade implements DatalatorFacadeInterface
             ->populate();
     }
 
-    public function readFromSchema(LoaderConfigurator $configurator, ReaderConfigurator $readerConfigurator): ReaderValue
+    public function readFromDatabase(LoaderConfigurator $configurator, ReaderConfigurator $readerConfigurator): ReaderValue
     {
         return $this->getFactory()
             ->createDatabaseReader($configurator)

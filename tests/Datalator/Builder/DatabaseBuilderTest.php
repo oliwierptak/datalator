@@ -4,12 +4,15 @@ declare(strict_types = 1);
 
 namespace Tests\Datalator\Builder;
 
-use Datalator\DatalatorFactory;
 use Datalator\Popo\LoaderConfigurator;
+use Datalator\Popo\ReaderConfigurator;
 use PHPUnit\Framework\TestCase;
+use Tests\DatalatorStub\Datalator\DatalatorFactoryStub;
 
 class DatabaseBuilderTest extends TestCase
 {
+    const TEST_DATABASE_DATALATOR = 'test_database_datalator';
+
     /**
      * @var string
      */
@@ -20,16 +23,41 @@ class DatabaseBuilderTest extends TestCase
      */
     protected $dataDir;
 
+    /**
+     * @var ReaderConfigurator
+     */
+    protected $readerConfiguratorFooOne;
+
+    /**
+     * @var ReaderConfigurator
+     */
+    protected $readerConfiguratorBuzz;
+
+    /**
+     * @var \Datalator\DatalatorFactoryInterface
+     */
+    protected $factory;
+
     protected function setUp(): void
     {
         $this->schemaDir = \TESTS_FIXTURE_DIR. 'database/schema/';
         $this->dataDir = \TESTS_FIXTURE_DIR . 'database/data/';
+
+        $this->readerConfiguratorFooOne = (new ReaderConfigurator())
+            ->setSource('foo_one')
+            ->setIdentityValue(1)
+            ->setQueryColumn('foo_one_key');
+
+        $this->readerConfiguratorBuzz = (new ReaderConfigurator())
+            ->setSource('buzz')
+            ->setIdentityValue(1)
+            ->setQueryColumn('value');
+
+        $this->factory = new DatalatorFactoryStub();
     }
 
     public function testCreate(): void
     {
-        $factory = new DatalatorFactory();
-
         $configurator = (new LoaderConfigurator())
             ->setSchema('default')
             ->setData('default')
@@ -40,15 +68,15 @@ class DatabaseBuilderTest extends TestCase
                 'foo',
             ]);
 
-        $databaseBuilder = $factory->createDatabaseBuilder($configurator);
+        $databaseBuilder = $this->factory->createDatabaseBuilder($configurator);
 
         $databaseBuilder->create();
+
+        $this->assertTrue($databaseBuilder->databaseExists(static::TEST_DATABASE_DATALATOR));
     }
 
     public function testDrop(): void
     {
-        $factory = new DatalatorFactory();
-
         $configurator = (new LoaderConfigurator())
             ->setSchema('default')
             ->setData('default')
@@ -59,16 +87,16 @@ class DatabaseBuilderTest extends TestCase
                 'foo',
             ]);
 
-        $databaseBuilder = $factory->createDatabaseBuilder($configurator);
+        $databaseBuilder = $this->factory->createDatabaseBuilder($configurator);
         $databaseBuilder->create();
 
         $databaseBuilder->drop();
+
+        $this->assertFalse($databaseBuilder->databaseExists(static::TEST_DATABASE_DATALATOR));
     }
 
     public function testPopulate(): void
     {
-        $factory = new DatalatorFactory();
-
         $configurator = (new LoaderConfigurator())
             ->setSchema('default')
             ->setData('default')
@@ -79,15 +107,18 @@ class DatabaseBuilderTest extends TestCase
                 'foo',
             ]);
 
-        $databaseBuilder = $factory->createDatabaseBuilder($configurator);
+        $databaseBuilder = $this->factory->createDatabaseBuilder($configurator);
 
         $databaseBuilder->populate();
+
+        $value = $this->factory->createDatabaseReader($configurator)
+            ->read($this->readerConfiguratorFooOne);
+
+        $this->assertEquals('foo-one', $value->getDatabaseValue());
     }
 
     public function testPopulateFeatureOne(): void
     {
-        $factory = new DatalatorFactory();
-
         $configurator = (new LoaderConfigurator())
             ->setSchema('default-feature-one')
             ->setData('default-feature-one')
@@ -97,15 +128,18 @@ class DatabaseBuilderTest extends TestCase
                 'buzz',
             ]);
 
-        $databaseBuilder = $factory->createDatabaseBuilder($configurator);
+        $databaseBuilder = $this->factory->createDatabaseBuilder($configurator);
 
         $databaseBuilder->populate();
+
+        $value = $this->factory->createDatabaseReader($configurator)
+            ->read($this->readerConfiguratorBuzz);
+
+        $this->assertEquals('Buzz', $value->getDatabaseValue());
     }
 
     public function testImport(): void
     {
-        $factory = new DatalatorFactory();
-
         $featureOneConfigurator = (new LoaderConfigurator())
             ->setSchema('default-feature-one')
             ->setData('default-feature-one')
@@ -133,12 +167,20 @@ class DatabaseBuilderTest extends TestCase
                 'bar',
             ]);
 
-
-        $databaseBuilder = $factory->createDatabaseBuilder($featureOneConfigurator);
+        $databaseBuilder = $this->factory->createDatabaseBuilder($featureOneConfigurator);
 
         $databaseBuilder->import([
             $defaultBarConfigurator,
             $defaultFooConfigurator,
         ]);
+
+        $valueFooOne = $this->factory->createDatabaseReader($featureOneConfigurator)
+            ->read($this->readerConfiguratorFooOne);
+
+        $valueBuzz = $this->factory->createDatabaseReader($featureOneConfigurator)
+            ->read($this->readerConfiguratorBuzz);
+
+        $this->assertEquals('foo-one', $valueFooOne->getDatabaseValue());
+        $this->assertEquals('Buzz', $valueBuzz->getDatabaseValue());
     }
 }

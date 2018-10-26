@@ -12,6 +12,8 @@ use Tests\DatalatorStub\Datalator\DatalatorFactoryStub;
 
 class DatalatorFacadeTest extends TestCase
 {
+    const TEST_DATABASE_DATALATOR = 'test_database_datalator';
+
     /**
      * @var string
      */
@@ -27,10 +29,30 @@ class DatalatorFacadeTest extends TestCase
      */
     protected $factory;
 
+    /**
+     * @var ReaderConfigurator
+     */
+    protected $readerConfiguratorFooOne;
+
+    /**
+     * @var ReaderConfigurator
+     */
+    protected $readerConfiguratorBuzz;
+
     protected function setUp(): void
     {
         $this->schemaDir = \TESTS_FIXTURE_DIR. 'database/schema/';
         $this->dataDir = \TESTS_FIXTURE_DIR . 'database/data/';
+
+        $this->readerConfiguratorFooOne = (new ReaderConfigurator())
+            ->setSource('foo_one')
+            ->setIdentityValue(1)
+            ->setQueryColumn('foo_one_key');
+
+        $this->readerConfiguratorBuzz = (new ReaderConfigurator())
+            ->setSource('buzz')
+            ->setIdentityValue(1)
+            ->setQueryColumn('value');
 
         $this->factory = new DatalatorFactoryStub();
     }
@@ -47,6 +69,11 @@ class DatalatorFacadeTest extends TestCase
             ->setDataPath($this->dataDir);
 
         $facade->create($configurator);
+
+        $databaseBuilder = $this->factory->createDatabaseBuilder($configurator);
+        $this->assertTrue(
+            $databaseBuilder->databaseExists(static::TEST_DATABASE_DATALATOR)
+        );
     }
 
     public function testDrop(): void
@@ -63,6 +90,11 @@ class DatalatorFacadeTest extends TestCase
         $facade->create($configurator);
 
         $facade->drop($configurator);
+
+        $databaseBuilder = $this->factory->createDatabaseBuilder($configurator);
+        $this->assertFalse(
+            $databaseBuilder->databaseExists(static::TEST_DATABASE_DATALATOR)
+        );
     }
 
     public function testPopulate(): void
@@ -77,6 +109,11 @@ class DatalatorFacadeTest extends TestCase
             ->setDataPath($this->dataDir);
 
         $facade->populate($configurator);
+
+        $value = $this->factory->createDatabaseReader($configurator)
+            ->read($this->readerConfiguratorFooOne);
+
+        $this->assertEquals('foo-one', $value->getDatabaseValue());
     }
 
     public function testPopulateFeatureOne(): void
@@ -91,6 +128,11 @@ class DatalatorFacadeTest extends TestCase
             ->setDataPath($this->dataDir);
 
         $facade->populate($configurator);
+
+        $value = $this->factory->createDatabaseReader($configurator)
+            ->read($this->readerConfiguratorBuzz);
+
+        $this->assertEquals('Buzz', $value->getDatabaseValue());
     }
 
     public function testImport(): void
@@ -126,9 +168,18 @@ class DatalatorFacadeTest extends TestCase
             $defaultBarConfigurator,
             $defaultFooConfigurator,
         ]);
+
+        $valueFooOne = $this->factory->createDatabaseReader($featureOneConfigurator)
+            ->read($this->readerConfiguratorFooOne);
+
+        $valueBuzz = $this->factory->createDatabaseReader($featureOneConfigurator)
+            ->read($this->readerConfiguratorBuzz);
+
+        $this->assertEquals('foo-one', $valueFooOne->getDatabaseValue());
+        $this->assertEquals('Buzz', $valueBuzz->getDatabaseValue());
     }
 
-    public function testReadSchema(): void
+    public function testReadFromDatabase(): void
     {
         $facade = new DatalatorFacade();
         $facade->setFactory($this->factory);
@@ -141,14 +192,9 @@ class DatalatorFacadeTest extends TestCase
 
         $facade->populate($configurator);
 
-        $readerConfigurator = (new ReaderConfigurator())
-            ->setSource('foo_one')
-            ->setIdentityValue(1)
-            ->setQueryColumn('foo_one_key');
+        $value = $facade->readFromDatabase($configurator, $this->readerConfiguratorFooOne);
 
-        $value = $facade->readFromSchema($configurator, $readerConfigurator);
-
-        $this->assertEquals('foo-one', $value->getSchemaValue());
+        $this->assertEquals('foo-one', $value->getDatabaseValue());
     }
 
     public function testReadDataWithoutIdentity(): void

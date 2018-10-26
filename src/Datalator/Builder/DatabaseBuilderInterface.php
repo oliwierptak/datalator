@@ -18,4 +18,6 @@ interface DatabaseBuilderInterface
      * @return void
      */
     public function import(array $importConfiguratorCollection): void;
+
+    public function databaseExists(string $name): bool;
 }

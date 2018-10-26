@@ -17,4 +17,6 @@ interface DatabasePopulatorInterface
      * @return void
      */
     public function populateDatabase(array $moduleCollection, array $data): void;
+
+    public function databaseExists(string $name): bool;
 }

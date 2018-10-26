@@ -71,7 +71,7 @@ interface DatalatorFacadeInterface
      *
      * @return \Datalator\Popo\ReaderValue
      */
-    public function readFromSchema(LoaderConfigurator $configurator, ReaderConfigurator $readerConfigurator): ReaderValue;
+    public function readFromDatabase(LoaderConfigurator $configurator, ReaderConfigurator $readerConfigurator): ReaderValue;
 
     /**
      * Specification:
