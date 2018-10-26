@@ -30,12 +30,12 @@ class DatalatorFacadeTest extends TestCase
     protected $factory;
 
     /**
-     * @var ReaderConfigurator
+     * @var \Datalator\Popo\ReaderConfigurator
      */
     protected $readerConfiguratorFooOne;
 
     /**
-     * @var ReaderConfigurator
+     * @var \Datalator\Popo\ReaderConfigurator
      */
     protected $readerConfiguratorBuzz;
 

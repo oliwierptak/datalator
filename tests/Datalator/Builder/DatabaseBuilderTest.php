@@ -24,12 +24,12 @@ class DatabaseBuilderTest extends TestCase
     protected $dataDir;
 
     /**
-     * @var ReaderConfigurator
+     * @var \Datalator\Popo\ReaderConfigurator
      */
     protected $readerConfiguratorFooOne;
 
     /**
-     * @var ReaderConfigurator
+     * @var \Datalator\Popo\ReaderConfigurator
      */
     protected $readerConfiguratorBuzz;
 
