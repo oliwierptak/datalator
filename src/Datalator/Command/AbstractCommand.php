@@ -4,8 +4,10 @@ declare(strict_types = 1);
 
 namespace Datalator\Command;
 
+use Datalator\Command\Environment\CommandEnvironmentLoader;
 use Datalator\DatalatorFacade;
 use Datalator\DatalatorFacadeInterface;
+use Datalator\Popo\CommandEnvironmentConfigurator;
 use Datalator\Popo\LoaderConfigurator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -81,7 +83,7 @@ abstract class AbstractCommand extends Command
 
     protected function buildConfigurator(InputInterface $input): LoaderConfigurator
     {
-        $config = $this->getDotData($input);
+        $config = $this->loadEnvironmentData($input);
 
         $configuration = (new LoaderConfigurator())
             ->fromArray($config);
@@ -89,47 +91,25 @@ abstract class AbstractCommand extends Command
         return $configuration;
     }
 
-    protected function getDotData(InputInterface $input): array
+    protected function loadEnvironmentData(InputInterface $input): array
     {
-        $config = $this->getDotConfig($input);
-
-        $path = $input->getOption(static::OPTION_PATH);
-        if (!$path) {
-            $path = \getcwd();
-        }
-        $path = \rtrim($path, \DIRECTORY_SEPARATOR) . \DIRECTORY_SEPARATOR;
-
-        $schemaName = $input->getOption(static::OPTION_SCHEMA);
-        $dataName = $input->getOption(static::OPTION_DATA);
-        $schemaPath = $path . \rtrim($input->getOption(static::OPTION_SCHEMA_PATH), \DIRECTORY_SEPARATOR) . \DIRECTORY_SEPARATOR;
-        $dataPath = $path . \rtrim($input->getOption(static::OPTION_DATA_PATH), \DIRECTORY_SEPARATOR) . \DIRECTORY_SEPARATOR;
-
-        $arguments = [
-            'schema' => $schemaName,
-            'data' => $dataName,
-            'schemaPath' => $schemaPath,
-            'dataPath' => $dataPath,
-            'modules' => $input->getOption(static::OPTION_MODULES),
-        ];
-
-        $result = \array_merge($config, $arguments);
-
-        return $result;
-    }
-
-    protected function getDotConfig(InputInterface $input): array
-    {
-        $dotPath = $input->getOption(static::OPTION_PATH);
-        if (!$dotPath) {
-            $dotPath = \rtrim(\getcwd(), \DIRECTORY_SEPARATOR) . \DIRECTORY_SEPARATOR;
-        }
-
-        $config = [];
-        $configFile = $dotPath . '.datalator';
-        if (\is_file($configFile)) {
-            $config = \parse_ini_file($configFile, false) ?? [];
-        }
+        $environmentConfigurator = $this->buildEnvironmentConfigurator($input);
+        $config = (new CommandEnvironmentLoader())
+            ->getEnvironmentData($environmentConfigurator);
 
         return $config;
+    }
+
+    protected function buildEnvironmentConfigurator(InputInterface $input): CommandEnvironmentConfigurator
+    {
+        $environmentConfigurator = (new CommandEnvironmentConfigurator())
+            ->setPath($input->getOption(static::OPTION_PATH))
+            ->setSchemaName($input->getOption(static::OPTION_SCHEMA))
+            ->setDataName($input->getOption(static::OPTION_DATA))
+            ->setSchemaPath($input->getOption(static::OPTION_SCHEMA_PATH))
+            ->setDataPath($input->getOption(static::OPTION_DATA_PATH))
+            ->setModules($input->getOption(static::OPTION_MODULES));
+
+        return $environmentConfigurator;
     }
 }

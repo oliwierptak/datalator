@@ -207,5 +207,37 @@
         "type": "mixed"
       }
     ]
+  },
+  {
+    "name": "CommandEnvironmentConfigurator",
+    "schema": [
+      {
+        "name": "path",
+        "type": "string"
+      },
+      {
+        "name": "schemaName",
+        "type": "string"
+      },
+      {
+        "name": "dataName",
+        "type": "string"
+      },
+      {
+        "name": "schemaPath",
+        "type": "string"
+      },
+      {
+        "name": "dataPath",
+        "type": "string"
+      },
+      {
+        "name": "modules",
+        "type": "array",
+        "collectionItem": "string",
+        "singular": "module",
+        "default": []
+      }
+    ]
   }
 ]
