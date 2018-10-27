@@ -70,8 +70,4 @@ class DatalatorFacade implements DatalatorFacadeInterface
             ->createCsvReader($configurator)
             ->read($readerConfigurator);
     }
-
-    public function databaseTableToCsv(): void
-    {
-    }
 }
