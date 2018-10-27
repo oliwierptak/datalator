@@ -12,7 +12,7 @@ class IniEnvironmentLoader implements IniEnvironmentLoaderInterface
     {
         $configurator = $this->ensureConfiguratorPaths($configurator);
 
-        $config = $this->loadIni($configurator->getPath(), $configurator->getIniFilename());
+        $config = $this->loadIni($configurator->requirePath(), $configurator->requireIniFilename());
         $result = \array_merge($config, $configurator->toArray());
 
         return $result;
@@ -21,8 +21,8 @@ class IniEnvironmentLoader implements IniEnvironmentLoaderInterface
     protected function ensureConfiguratorPaths(IniEnvironmentConfigurator $configurator): IniEnvironmentConfigurator
     {
         $path = $this->ensurePath($configurator->getPath());
-        $schemaPath = $configurator->getPath() . \rtrim($configurator->getSchemaPath(), \DIRECTORY_SEPARATOR) . \DIRECTORY_SEPARATOR;
-        $dataPath = $configurator->getPath() . \rtrim($configurator->getDataPath(), \DIRECTORY_SEPARATOR) . \DIRECTORY_SEPARATOR;
+        $schemaPath = $path . \rtrim($configurator->requireSchemaPath(), \DIRECTORY_SEPARATOR) . \DIRECTORY_SEPARATOR;
+        $dataPath = $path . \rtrim($configurator->requireDataPath(), \DIRECTORY_SEPARATOR) . \DIRECTORY_SEPARATOR;
 
         $configurator->setPath($path);
         $configurator->setSchemaPath($schemaPath);
@@ -44,7 +44,7 @@ class IniEnvironmentLoader implements IniEnvironmentLoaderInterface
     protected function loadIni(string $path, string $iniFilename): array
     {
         $config = [];
-        $configFile = $this->ensurePath($path) . $iniFilename;
+        $configFile = $path . $iniFilename;
 
         if (\is_file($configFile)) {
             $config = \parse_ini_file($configFile, false) ?? [];
