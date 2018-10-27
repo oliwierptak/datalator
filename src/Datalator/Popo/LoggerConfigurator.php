@@ -83,7 +83,7 @@ class LoggerConfigurator
     {
         $data = [];
         foreach ($this->propertyMapping as $key => $type) {
-            $data[$key] = null;
+            $data[$key] = $this->default[$key] ?? null;
 
             if (!isset($this->data[$key])) {
                 continue;
