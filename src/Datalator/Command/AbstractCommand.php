@@ -4,10 +4,10 @@ declare(strict_types = 1);
 
 namespace Datalator\Command;
 
-use Datalator\Command\Environment\CommandEnvironmentLoader;
+use Datalator\Command\Environment\IniEnvironmentLoader;
 use Datalator\DatalatorFacade;
 use Datalator\DatalatorFacadeInterface;
-use Datalator\Popo\CommandEnvironmentConfigurator;
+use Datalator\Popo\IniEnvironmentConfigurator;
 use Datalator\Popo\LoaderConfigurator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -94,15 +94,15 @@ abstract class AbstractCommand extends Command
     protected function loadEnvironmentData(InputInterface $input): array
     {
         $environmentConfigurator = $this->buildEnvironmentConfigurator($input);
-        $config = (new CommandEnvironmentLoader())
+        $config = (new IniEnvironmentLoader())
             ->getEnvironmentData($environmentConfigurator);
 
         return $config;
     }
 
-    protected function buildEnvironmentConfigurator(InputInterface $input): CommandEnvironmentConfigurator
+    protected function buildEnvironmentConfigurator(InputInterface $input): IniEnvironmentConfigurator
     {
-        $environmentConfigurator = (new CommandEnvironmentConfigurator())
+        $environmentConfigurator = (new IniEnvironmentConfigurator())
             ->setPath($input->getOption(static::OPTION_PATH))
             ->setSchemaName($input->getOption(static::OPTION_SCHEMA))
             ->setDataName($input->getOption(static::OPTION_DATA))

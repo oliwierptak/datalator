@@ -209,11 +209,16 @@
     ]
   },
   {
-    "name": "CommandEnvironmentConfigurator",
+    "name": "IniEnvironmentConfigurator",
     "schema": [
       {
         "name": "path",
         "type": "string"
+      },
+      {
+        "name": "iniFilename",
+        "type": "string",
+        "default": ".datalator"
       },
       {
         "name": "schemaName",
