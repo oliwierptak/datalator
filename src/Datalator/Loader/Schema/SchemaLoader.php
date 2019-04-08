@@ -54,8 +54,25 @@ class SchemaLoader implements SchemaLoaderInterface
         return $configurator;
     }
 
-    protected function buildSchemaConfigurator(LoaderConfigurator $configurator, DatabaseConfigurator $databaseConfigurator, SplFileInfo $databaseFile): SchemaConfigurator
-    {
+    protected function buildSchemaConfigurator(
+        LoaderConfigurator $configurator,
+        DatabaseConfigurator $databaseConfigurator,
+        SplFileInfo $databaseFile
+    ): SchemaConfigurator {
+        $schemaConfigurator = $this->createSchemaConfigurator($databaseConfigurator, $databaseFile);
+
+        $loadedModules = $this->moduleLoader->load($configurator);
+        $this->validateLoadedModules($configurator, $loadedModules);
+
+        $schemaConfigurator->setLoadedModules($loadedModules);
+
+        return $schemaConfigurator;
+    }
+
+    protected function createSchemaConfigurator(
+        DatabaseConfigurator $databaseConfigurator,
+        SplFileInfo $databaseFile
+    ): SchemaConfigurator {
         $databaseName = $databaseConfigurator->requireConnection()->requireDbname();
         $schemaName = $this->getSchemaName($databaseFile);
         $sqlCreate = $this->getSql($databaseFile, $databaseName, 'create.sql');
@@ -66,11 +83,6 @@ class SchemaLoader implements SchemaLoaderInterface
             ->setDatabaseConfigurator($databaseConfigurator)
             ->setSqlCreate($sqlCreate)
             ->setSqlDrop($sqlDrop);
-
-        $loadedModules = $this->moduleLoader->load($configurator);
-        $this->validateLoadedModules($configurator, $loadedModules);
-
-        $schemaConfigurator->setLoadedModules($loadedModules);
 
         return $schemaConfigurator;
     }
@@ -118,10 +130,7 @@ class SchemaLoader implements SchemaLoaderInterface
     protected function getSchemaName(SplFileInfo $schemaFile): string
     {
         $nameTokens = \explode(\DIRECTORY_SEPARATOR, $schemaFile->getRelativePath());
-
-        //pop twice
-        \array_pop($nameTokens);
-        $name =  \array_pop($nameTokens);
+        $name =  \array_shift($nameTokens);
 
         return $name;
     }
