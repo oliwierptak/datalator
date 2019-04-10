@@ -73,10 +73,15 @@ class CsvDataSource implements DataSourceInterface
             return;
         }
 
-        $data = \array_map('str_getcsv', \file($this->csvFile->getPathname()));
+        $handle = \fopen($this->csvFile->getPathname(), 'r');
+        while ($row = \fgetcsv($handle)) {
+            if ($this->columns === null) {
+                $this->columns = $row;
+                continue;
+            }
 
-        $this->columns = \array_shift($data);
-        $this->data = \array_map([$this, 'prepareRow'], $data);
+            $this->data[] = $this->prepareRow($row);
+        }
 
         $this->loadedTimestamp = \time();
     }

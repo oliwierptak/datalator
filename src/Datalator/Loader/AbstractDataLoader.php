@@ -51,7 +51,7 @@ abstract class AbstractDataLoader implements DataLoaderInterface
 
         $pattern = \sprintf(
             "@^%s/${enabledModulesPattern}/(.*)$@",
-            $configurator->requireSchema()
+            $configurator->requireData()
         );
 
         $fileCollection = $this->fileLoader->load(
