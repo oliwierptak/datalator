@@ -12,6 +12,7 @@
     "prefer-stable": true,
     "require": {
         "php": "^7.1",
+        "ext-pdo": "*",
         "doctrine/dbal": "^2.7",
         "symfony/finder": "^4.0",
         "symfony/console": "^4.1",
@@ -47,5 +48,14 @@
             "chmod +x bin/datalator",
             "vendor/bin/cs-setup"
         ]
-    }
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../pdoo/",
+            "options": {
+                "symlink": false
+            }
+        }
+    ]
 }

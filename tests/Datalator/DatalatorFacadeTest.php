@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Tests\Datalator;
 
 use Datalator\DatalatorFacade;
+use Datalator\Helper\DatabaseHelper;
 use Datalator\Popo\LoaderConfigurator;
 use Datalator\Popo\ReaderConfigurator;
 use PHPUnit\Framework\TestCase;
@@ -14,15 +15,8 @@ class DatalatorFacadeTest extends TestCase
 {
     const TEST_DATABASE_DATALATOR = 'test_database_datalator';
 
-    /**
-     * @var string
-     */
-    protected $schemaDir;
-
-    /**
-     * @var string
-     */
-    protected $dataDir;
+    const SCHEMA_PATH = \TESTS_FIXTURE_DIR . 'database/schema/';
+    const DATA_PATH = \TESTS_FIXTURE_DIR . 'database/data/';
 
     /**
      * @var \Datalator\DatalatorFactoryInterface
@@ -39,11 +33,40 @@ class DatalatorFacadeTest extends TestCase
      */
     protected $readerConfiguratorBuzz;
 
+    /**
+     * @var DatabaseHelper
+     */
+    protected static $databaseHelper;
+
+    public static function setUpBeforeClass()
+    {
+        static::cleanState();
+    }
+
+    protected static function cleanState(): void
+    {
+        self::setupDatabaseHelper();
+
+        static::$databaseHelper->dropDatabase(static::TEST_DATABASE_DATALATOR);
+    }
+
+    protected static function setupDatabaseHelper(): void
+    {
+        if (static::$databaseHelper === null) {
+            $configurator = (new LoaderConfigurator())
+                ->setSchema('default')
+                ->setData('default')
+                ->setSchemaPath(static::SCHEMA_PATH)
+                ->setDataPath(static::DATA_PATH);
+
+            static::$databaseHelper = new DatabaseHelper();
+            static::$databaseHelper->setFactory(new DatalatorFactoryStub());
+            static::$databaseHelper->setConfigurator($configurator);
+        }
+    }
+
     protected function setUp(): void
     {
-        $this->schemaDir = \TESTS_FIXTURE_DIR. 'database/schema/';
-        $this->dataDir = \TESTS_FIXTURE_DIR . 'database/data/';
-
         $this->readerConfiguratorFooOne = (new ReaderConfigurator())
             ->setSource('foo_one')
             ->setIdentityValue(1)
@@ -65,14 +88,13 @@ class DatalatorFacadeTest extends TestCase
         $configurator = (new LoaderConfigurator())
             ->setSchema('default')
             ->setData('default')
-            ->setSchemaPath($this->schemaDir)
-            ->setDataPath($this->dataDir);
+            ->setSchemaPath(static::SCHEMA_PATH)
+            ->setDataPath(static::DATA_PATH);
 
         $facade->create($configurator);
 
-        $databaseBuilder = $this->factory->createDatabaseBuilder($configurator);
         $this->assertTrue(
-            $databaseBuilder->databaseExists(static::TEST_DATABASE_DATALATOR)
+            static::$databaseHelper->databaseExists(static::TEST_DATABASE_DATALATOR)
         );
     }
 
@@ -84,16 +106,15 @@ class DatalatorFacadeTest extends TestCase
         $configurator = (new LoaderConfigurator())
             ->setSchema('default')
             ->setData('default')
-            ->setSchemaPath($this->schemaDir)
-            ->setDataPath($this->dataDir);
+            ->setSchemaPath(static::SCHEMA_PATH)
+            ->setDataPath(static::DATA_PATH);
 
         $facade->create($configurator);
 
         $facade->drop($configurator);
 
-        $databaseBuilder = $this->factory->createDatabaseBuilder($configurator);
         $this->assertFalse(
-            $databaseBuilder->databaseExists(static::TEST_DATABASE_DATALATOR)
+            static::$databaseHelper->databaseExists(static::TEST_DATABASE_DATALATOR)
         );
     }
 
@@ -105,8 +126,8 @@ class DatalatorFacadeTest extends TestCase
         $configurator = (new LoaderConfigurator())
             ->setSchema('default')
             ->setData('default')
-            ->setSchemaPath($this->schemaDir)
-            ->setDataPath($this->dataDir);
+            ->setSchemaPath(static::SCHEMA_PATH)
+            ->setDataPath(static::DATA_PATH);
 
         $facade->populate($configurator);
 
@@ -124,8 +145,8 @@ class DatalatorFacadeTest extends TestCase
         $configurator = (new LoaderConfigurator())
             ->setSchema('default-feature-one')
             ->setData('default-feature-one')
-            ->setSchemaPath($this->schemaDir)
-            ->setDataPath($this->dataDir);
+            ->setSchemaPath(static::SCHEMA_PATH)
+            ->setDataPath(static::DATA_PATH);
 
         $facade->populate($configurator);
 
@@ -143,14 +164,14 @@ class DatalatorFacadeTest extends TestCase
         $featureOneConfigurator = (new LoaderConfigurator())
             ->setSchema('default-feature-one')
             ->setData('default-feature-one')
-            ->setSchemaPath($this->schemaDir)
-            ->setDataPath($this->dataDir);
+            ->setSchemaPath(static::SCHEMA_PATH)
+            ->setDataPath(static::DATA_PATH);
 
         $defaultFooConfigurator = (new LoaderConfigurator())
             ->setSchema('default')
             ->setData('default')
-            ->setSchemaPath($this->schemaDir)
-            ->setDataPath($this->dataDir)
+            ->setSchemaPath(static::SCHEMA_PATH)
+            ->setDataPath(static::DATA_PATH)
             ->setModules([
                 'foo',
             ]);
@@ -158,8 +179,8 @@ class DatalatorFacadeTest extends TestCase
         $defaultBarConfigurator = (new LoaderConfigurator())
             ->setSchema('default')
             ->setData('default')
-            ->setSchemaPath($this->schemaDir)
-            ->setDataPath($this->dataDir)
+            ->setSchemaPath(static::SCHEMA_PATH)
+            ->setDataPath(static::DATA_PATH)
             ->setModules([
                 'bar',
             ]);
@@ -187,8 +208,8 @@ class DatalatorFacadeTest extends TestCase
         $configurator = (new LoaderConfigurator())
             ->setSchema('default')
             ->setData('default')
-            ->setSchemaPath($this->schemaDir)
-            ->setDataPath($this->dataDir);
+            ->setSchemaPath(static::SCHEMA_PATH)
+            ->setDataPath(static::DATA_PATH);
 
         $facade->populate($configurator);
 
@@ -205,8 +226,8 @@ class DatalatorFacadeTest extends TestCase
         $configurator = (new LoaderConfigurator())
             ->setSchema('default')
             ->setData('default')
-            ->setSchemaPath($this->schemaDir)
-            ->setDataPath($this->dataDir);
+            ->setSchemaPath(static::SCHEMA_PATH)
+            ->setDataPath(static::DATA_PATH);
 
         $facade->populate($configurator);
 
@@ -229,8 +250,8 @@ class DatalatorFacadeTest extends TestCase
         $configurator = (new LoaderConfigurator())
             ->setSchema('default')
             ->setData('default')
-            ->setSchemaPath($this->schemaDir)
-            ->setDataPath($this->dataDir);
+            ->setSchemaPath(static::SCHEMA_PATH)
+            ->setDataPath(static::DATA_PATH);
 
         $facade->populate($configurator);
 
