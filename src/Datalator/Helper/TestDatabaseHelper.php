@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace Datalator\Helper;
 
-class DatabaseHelper
+class TestDatabaseHelper
 {
     use TraitHelper;
 

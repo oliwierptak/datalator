@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace Tests\Datalator;
 
 use Datalator\DatalatorFacade;
-use Datalator\Helper\DatabaseHelper;
+use Datalator\Helper\TestDatabaseHelper;
 use Datalator\Popo\LoaderConfigurator;
 use Datalator\Popo\ReaderConfigurator;
 use PHPUnit\Framework\TestCase;
@@ -34,7 +34,7 @@ class DatalatorFacadeTest extends TestCase
     protected $readerConfiguratorBuzz;
 
     /**
-     * @var DatabaseHelper
+     * @var TestDatabaseHelper
      */
     protected static $databaseHelper;
 
@@ -59,7 +59,7 @@ class DatalatorFacadeTest extends TestCase
                 ->setSchemaPath(static::SCHEMA_PATH)
                 ->setDataPath(static::DATA_PATH);
 
-            static::$databaseHelper = new DatabaseHelper();
+            static::$databaseHelper = new TestDatabaseHelper();
             static::$databaseHelper->setFactory(new DatalatorFactoryStub());
             static::$databaseHelper->setConfigurator($configurator);
         }

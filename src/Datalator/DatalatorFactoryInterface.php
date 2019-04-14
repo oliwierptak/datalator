@@ -54,7 +54,9 @@ interface DatalatorFactoryInterface
 
     public function createCsvDataLoader(): CsvDataLoader;
 
-    public function createDatabaseReader(LoaderConfigurator $configurator, ?Connection $connection = null): ReaderInterface;
+    public function createDatabaseReader(LoaderConfigurator $configurator): ReaderInterface;
+
+    public function createDatabaseReaderFromConnection(Connection $connection): ReaderInterface;
 
     /**
      * @param \Datalator\Popo\LoaderConfigurator $configurator

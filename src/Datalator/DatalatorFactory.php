@@ -20,8 +20,6 @@ use Datalator\Logger\LoggerFactory;
 use Datalator\Logger\LoggerFactoryInterface;
 use Datalator\Popo\LoaderConfigurator;
 use Datalator\Popo\SchemaConfigurator;
-use Datalator\Populator\DatabasePopulator;
-use Datalator\Populator\DatabasePopulatorInterface;
 use Datalator\Reader\CsvReader;
 use Datalator\Reader\DatabaseReader;
 use Datalator\Reader\ReaderInterface;
@@ -131,31 +129,6 @@ class DatalatorFactory implements DatalatorFactoryInterface
         );
     }
 
-    public function XXX_createDatabasePopulator(LoaderConfigurator $configurator, ?Connection $connection = null): DatabasePopulatorInterface
-    {
-        $schemaConfigurator = $this->createSchemaConfigurator($configurator);
-
-        $databaseName = $schemaConfigurator
-            ->requireDatabaseConfigurator()
-            ->requireConnection()
-            ->requireDbname();
-
-        $schemaName = $schemaConfigurator
-            ->requireSchemaName();
-
-        if (!$connection) {
-            $connection = $this->createConnection($configurator, false);
-        }
-
-        return new DatabasePopulator(
-            $connection,
-            $this->createLogger(),
-            $databaseName,
-            $configurator->requireData(),
-            $schemaName
-        );
-    }
-
     public function createSchemaConfigurator(LoaderConfigurator $configurator): SchemaConfigurator
     {
         $this->createLoaderValidator()->validate($configurator);
@@ -165,14 +138,16 @@ class DatalatorFactory implements DatalatorFactoryInterface
         );
     }
 
-    public function createDatabaseReader(LoaderConfigurator $configurator, ?Connection $connection = null): ReaderInterface
+    public function createDatabaseReader(LoaderConfigurator $configurator): ReaderInterface
     {
         $this->createLoaderValidator()->validate($configurator);
+        $connection = $this->createConnection($configurator, true);
 
-        if (!$connection) {
-            $connection = $this->createConnection($configurator, true);
-        }
+        return new DatabaseReader($connection);
+    }
 
+    public function createDatabaseReaderFromConnection(Connection $connection): ReaderInterface
+    {
         return new DatabaseReader($connection);
     }
 
