@@ -5,7 +5,6 @@ declare(strict_types = 1);
 namespace Datalator\Builder;
 
 use Datalator\Loader\DataLoaderInterface;
-use Datalator\Loader\LoaderValidatorInterface;
 use Datalator\Loader\Schema\SchemaLoaderInterface;
 use Datalator\Popo\LoaderConfigurator;
 use Datalator\Popo\SchemaConfigurator;
@@ -84,7 +83,7 @@ class DatabaseBuilder implements DatabaseBuilderInterface
             ->populateData(
                 $this->getSchemaConfigurator()->requireLoadedModules(),
                 $data
-        );
+            );
     }
 
     public function import(array $importConfiguratorCollection): void

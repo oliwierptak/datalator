@@ -4,7 +4,6 @@ declare(strict_types = 1);
 
 namespace Datalator\Populator;
 
-use Datalator\Popo\ModuleTable;
 use Datalator\Popo\SchemaConfigurator;
 use Doctrine\DBAL\Connection;
 use Psr\Log\LoggerInterface;
@@ -108,9 +107,6 @@ class DatabaseCreator implements DatabaseCreatorInterface
         );
     }
 
-    /**
-     * @return string
-     */
     protected function resolveDatabaseName(): string
     {
         $name = $this->schemaConfigurator

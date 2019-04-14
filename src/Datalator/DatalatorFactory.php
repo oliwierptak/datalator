@@ -25,7 +25,6 @@ use Datalator\Populator\DatabasePopulatorInterface;
 use Datalator\Reader\CsvReader;
 use Datalator\Reader\DatabaseReader;
 use Datalator\Reader\ReaderInterface;
-use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use PDO;
@@ -69,16 +68,18 @@ class DatalatorFactory implements DatalatorFactoryInterface
         //$dsn = "<driver>://<username>:<password>@<host>:<port>/<database>";
         //mysql://user:secret@localhost/dbname
         //mysql:host=hostname;dbname=databasename
-        $dsn = sprintf('%s:host=%s:%s;dbname=%s',
-            'mysql',//$schemaConfigurator->requireDatabaseConfigurator()->requireConnection()->requireDriver(),
+        $dsn = \sprintf(
+            '%s:host=%s:%s;dbname=%s',
+            'mysql', //$schemaConfigurator->requireDatabaseConfigurator()->requireConnection()->requireDriver(),
             $schemaConfigurator->requireDatabaseConfigurator()->requireConnection()->requireHost(),
             $schemaConfigurator->requireDatabaseConfigurator()->requireConnection()->requirePort(),
             $schemaConfigurator->requireDatabaseConfigurator()->requireConnection()->requireDbname()
         );
 
         if (!$useDatabase) {
-            $dsn = sprintf('%s:host=%s:%s',
-                'mysql',//$schemaConfigurator->requireDatabaseConfigurator()->requireConnection()->requireDriver(),
+            $dsn = \sprintf(
+                '%s:host=%s:%s',
+                'mysql', //$schemaConfigurator->requireDatabaseConfigurator()->requireConnection()->requireDriver(),
                 $schemaConfigurator->requireDatabaseConfigurator()->requireConnection()->requireHost(),
                 $schemaConfigurator->requireDatabaseConfigurator()->requireConnection()->requirePort()
             );

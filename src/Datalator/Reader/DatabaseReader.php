@@ -43,8 +43,7 @@ class DatabaseReader implements ReaderInterface
             } else {
                 $value->setDatabaseValue($data[$configurator->getQueryColumn()]);
             }
-        }
-        catch (\Throwable $throwable) {
+        } catch (\Throwable $throwable) {
             return $value;
         }
 
