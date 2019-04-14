@@ -102,7 +102,6 @@ class DatalatorFactory implements DatalatorFactoryInterface
         return new DatabaseBuilder(
             $this->createSchemaLoader(),
             $this->createCsvDataLoader(),
-            $this->createLoaderValidator(),
             $this->createLogger(),
             $configurator
         );

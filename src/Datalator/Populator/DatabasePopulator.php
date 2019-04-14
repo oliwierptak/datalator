@@ -37,53 +37,37 @@ class DatabasePopulator implements DatabasePopulatorInterface
         $this->schemaConfigurator = $schemaConfigurator;
     }
 
-    public function createDatabase(): void
+    public function populateSchema(?SchemaConfigurator $schemaConfigurator = null): void
     {
-        $name = $this->schemaConfigurator
-            ->requireDatabaseConfigurator()
-            ->requireConnection()
-            ->requireDbname();
-
-        if ($this->databaseExists($name)) {
-            $this->dropDatabase();
+        if ($schemaConfigurator === null) {
+            $schemaConfigurator = $this->schemaConfigurator;
         }
 
-        $this->getConnection()->getSchemaManager()->createDatabase(
-            $name
-        );
+        /** @var \Datalator\Popo\ModuleConfigurator[] $moduleCollection */
+        $moduleCollection = $schemaConfigurator->requireLoadedModules();
 
-        $this->info('Created database');
-    }
+        foreach ($moduleCollection as $module) {
+            $this->debug('Creating module: ' . $module->getName());
+            foreach ($module->getTables() as $table) {
+                /** @var \Datalator\Popo\ModuleTable $table */
+                $populator = $this->buildTableCreator($table);
 
-    public function dropDatabase(): void
-    {
-        $name = $this->schemaConfigurator
-            ->requireDatabaseConfigurator()
-            ->requireConnection()
-            ->requireDbname();
-
-        if (!$this->databaseExists($name)) {
-            return;
+                $this->debug('Creating table: ' . $table->getName());
+                $populator->createTable();
+            }
         }
 
-        $this->getConnection()->getSchemaManager()->dropDatabase(
-            $name
-        );
-
-        $this->info('Dropped database');
+        $this->info('Populated database');
     }
 
-    public function populateDatabase(array $moduleCollection, array $data): void
+    public function populateData(array $moduleCollection, array $data): void
     {
         foreach ($moduleCollection as $module) {
             $this->debug('Populating module: ' . $module->getName());
             foreach ($module->getTables() as $table) {
                 /** @var \Datalator\Popo\ModuleTable $table */
-                $dataSource = $this->getTableDataSource($module->getName(), $table->getName(), $data);
+                $dataSource = $this->resolveTableDataSource($module->getName(), $table->getName(), $data);
                 $populator = $this->buildTablePopulator($table, $dataSource);
-
-                $this->debug('Creating table: ' . $table->getName());
-                $populator->createTable();
 
                 $this->debug('Populating table: ' . $table->getName());
                 $populator->populateTable();
@@ -91,18 +75,6 @@ class DatabasePopulator implements DatabasePopulatorInterface
         }
 
         $this->info('Populated database');
-    }
-
-    public function databaseExists(string $name): bool
-    {
-        try {
-            return \in_array(
-                $name,
-                $this->getConnection()->getSchemaManager()->listDatabases()
-            );
-        } catch (\Throwable $e) {
-            return false;
-        }
     }
 
     /**
@@ -114,7 +86,7 @@ class DatabasePopulator implements DatabasePopulatorInterface
      *
      * @return \Datalator\Data\DataSourceInterface
      */
-    protected function getTableDataSource(string $moduleName, string $tableName, array $data): DataSourceInterface
+    protected function resolveTableDataSource(string $moduleName, string $tableName, array $data): DataSourceInterface
     {
         if (!isset($data[$moduleName])) {
             throw new \RuntimeException('DataSource for module: ' . $moduleName . ' not found');
@@ -130,6 +102,16 @@ class DatabasePopulator implements DatabasePopulatorInterface
         }
 
         return null;
+    }
+
+    protected function buildTableCreator(ModuleTable $table): TableCreatorInterface
+    {
+        $populator = new TableCreator(
+            $this->getConnection(),
+            $table
+        );
+
+        return $populator;
     }
 
     protected function buildTablePopulator(ModuleTable $table, DataSourceInterface $dataSource): TablePopulatorInterface

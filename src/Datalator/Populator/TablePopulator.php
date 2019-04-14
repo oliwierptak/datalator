@@ -35,32 +35,8 @@ class TablePopulator implements TablePopulatorInterface
         $this->dataSource = $dataSource;
     }
 
-    public function createTable(): void
-    {
-        $this
-            ->getConnection()
-            ->executeQuery(
-                $this->table->getSql()
-            );
-    }
-
-    public function dropTable(): void
-    {
-        if (!$this->tableExists()) {
-            return;
-        }
-
-        $this->getConnection()->getSchemaManager()->dropTable(
-            $this->table->getName()
-        );
-    }
-
     public function populateTable(): void
     {
-        if (!$this->tableExists()) {
-            $this->createTable();
-        }
-
         foreach ($this->dataSource->getData() as $rowData) {
             $row = $this->prepareRow($rowData);
 
@@ -101,13 +77,6 @@ class TablePopulator implements TablePopulatorInterface
         };
 
         return \array_map($mapFunction, $data);
-    }
-
-    protected function tableExists(): bool
-    {
-        return $this->getConnection()->getSchemaManager()->tablesExist(
-            [$this->table->getName()]
-        );
     }
 
     protected function getConnection(): Connection

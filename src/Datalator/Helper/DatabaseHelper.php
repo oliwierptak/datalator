@@ -15,18 +15,21 @@ class DatabaseHelper
 
     protected function build(): self
     {
-        $this->configure();
-
-        if ($this->schemaLoader === null) {
-            $this->schemaLoader = $this->getFactory()->createSchemaLoader();
+        if ($this->isDone) {
+            return $this;
         }
+
+        $this->configure();
+        $this->schemaLoader = $this->getFactory()->createSchemaLoader();
+        $this->done();
 
         return $this;
     }
 
     public function databaseExists(string $databaseName): bool
     {
-        $this->configure();
+        $this->build();
+
         $connection = $this->getFactory()->createConnection($this->configurator, false);
 
         return \in_array(
@@ -37,6 +40,8 @@ class DatabaseHelper
 
     public function createDatabase(string $databaseName): void
     {
+        $this->build();
+
         if ($this->databaseExists($databaseName)) {
             $this->dropDatabase($databaseName);
         }
@@ -50,6 +55,8 @@ class DatabaseHelper
 
     public function dropDatabase(string $databaseName): void
     {
+        $this->build();
+
         if (!$this->databaseExists($databaseName)) {
             return;
         }

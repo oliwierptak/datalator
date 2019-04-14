@@ -4,11 +4,11 @@ declare(strict_types = 1);
 
 namespace Datalator\Populator;
 
+use Datalator\Popo\SchemaConfigurator;
+
 interface DatabasePopulatorInterface
 {
-    public function createDatabase(): void;
-
-    public function dropDatabase(): void;
+    public function populateSchema(?SchemaConfigurator $schemaConfigurator = null): void;
 
     /**
      * @param \Datalator\Popo\ModuleConfigurator[] $moduleCollection
@@ -16,7 +16,5 @@ interface DatabasePopulatorInterface
      *
      * @return void
      */
-    public function populateDatabase(array $moduleCollection, array $data): void;
-
-    public function databaseExists(string $name): bool;
+    public function populateData(array $moduleCollection, array $data): void;
 }
