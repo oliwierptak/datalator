@@ -9,6 +9,7 @@ use Datalator\Loader\Schema\SchemaLoaderInterface;
 use Datalator\Popo\LoaderConfigurator;
 use Datalator\Popo\SchemaConfigurator;
 use Datalator\Populator\DatabaseCreator;
+use Datalator\Populator\DatabaseCreatorInterface;
 use Datalator\Populator\DatabasePopulator;
 use Datalator\Populator\DatabasePopulatorInterface;
 use Doctrine\DBAL\Connection;
@@ -169,7 +170,7 @@ class DatabaseBuilder implements DatabaseBuilderInterface
         return $this->schemaConfigurator;
     }
 
-    protected function buildDatabaseCreator(?LoaderConfigurator $configurator = null): DatabaseCreator
+    protected function buildDatabaseCreator(?LoaderConfigurator $configurator = null): DatabaseCreatorInterface
     {
         if ($configurator === null) {
             $configurator = clone $this->loaderConfigurator;

@@ -20,6 +20,10 @@ use Datalator\Logger\LoggerFactory;
 use Datalator\Logger\LoggerFactoryInterface;
 use Datalator\Popo\LoaderConfigurator;
 use Datalator\Popo\SchemaConfigurator;
+use Datalator\Populator\DatabaseCreator;
+use Datalator\Populator\DatabaseCreatorInterface;
+use Datalator\Populator\DatabasePopulator;
+use Datalator\Populator\DatabasePopulatorInterface;
 use Datalator\Reader\CsvReader;
 use Datalator\Reader\DatabaseReader;
 use Datalator\Reader\ReaderInterface;
@@ -135,6 +139,24 @@ class DatalatorFactory implements DatalatorFactoryInterface
 
         return $this->createSchemaLoader()->load(
             $configurator
+        );
+    }
+
+    public function createDatabaseCreator(Connection $connection, SchemaConfigurator $schemaConfigurator): DatabaseCreatorInterface
+    {
+        return new DatabaseCreator(
+            $this->createLogger(),
+            $connection,
+            $schemaConfigurator
+        );
+    }
+
+    public function createDatabasePopulator(Connection $connection, SchemaConfigurator $schemaConfigurator): DatabasePopulatorInterface
+    {
+        return new DatabasePopulator(
+            $this->createLogger(),
+            $connection,
+            $schemaConfigurator
         );
     }
 

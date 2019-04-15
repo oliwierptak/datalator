@@ -11,6 +11,8 @@ use Datalator\Loader\Module\ModuleLoaderInterface;
 use Datalator\Loader\Schema\SchemaLoaderInterface;
 use Datalator\Popo\LoaderConfigurator;
 use Datalator\Popo\SchemaConfigurator;
+use Datalator\Populator\DatabaseCreatorInterface;
+use Datalator\Populator\DatabasePopulatorInterface;
 use Datalator\Reader\ReaderInterface;
 use Doctrine\DBAL\Connection;
 use Psr\Log\LoggerInterface;
@@ -85,6 +87,10 @@ interface DatalatorFactoryInterface
      * @throws \InvalidArgumentException In case when configurator's validation fails
      */
     public function createSchemaConfigurator(LoaderConfigurator $configurator): SchemaConfigurator;
+
+    public function createDatabaseCreator(Connection $connection, SchemaConfigurator $schemaConfigurator): DatabaseCreatorInterface;
+
+    public function createDatabasePopulator(Connection $connection, SchemaConfigurator $schemaConfigurator): DatabasePopulatorInterface;
 
     public function createLoaderValidator(): LoaderValidatorInterface;
 
