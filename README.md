@@ -36,7 +36,7 @@ protected function tearDown()
  ```
 
 
-### Configuration
+### Command line Configuration
 
 Example of `.datalator` configuration file.
 ```
