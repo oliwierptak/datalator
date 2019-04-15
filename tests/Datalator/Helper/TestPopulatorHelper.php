@@ -5,7 +5,6 @@ declare(strict_types = 1);
 namespace Tests\Datalator\Helper;
 
 use Datalator\Helper\TestDatabaseHelper;
-use Datalator\Helper\TestDatabasePopulator;
 use Datalator\Popo\LoaderConfigurator;
 use Datalator\Popo\ReaderConfigurator;
 use PHPUnit\Framework\TestCase;
@@ -22,7 +21,7 @@ class TestPopulatorHelper extends TestCase
     /**
      * @var TestDatabaseHelper
      */
-    protected static $testDatabaseHelper;
+    protected static $databaseHelper;
 
     /**
      * @var \Datalator\DatalatorFactoryInterface
@@ -40,19 +39,9 @@ class TestPopulatorHelper extends TestCase
     protected $readerConfiguratorBuzz;
 
     /**
-     * @var \Datalator\Reader\ReaderInterface
+     * @var \Datalator\Helper\TestPopulatorHelper
      */
-    protected $defaultDatabaseReader;
-
-    /**
-     * @var \Datalator\Reader\ReaderInterface
-     */
-    protected $featureOneDatabaseReader;
-
-    /**
-     * @var \Datalator\Helper\TestDatabasePopulator
-     */
-    protected $testPopulator;
+    protected $databasePopulator;
 
     public static function setUpBeforeClass()
     {
@@ -63,22 +52,22 @@ class TestPopulatorHelper extends TestCase
     {
         self::setupDatabaseHelper();
 
-        static::$testDatabaseHelper->dropDatabase(static::TEST_DATABASE_DATALATOR);
-        static::$testDatabaseHelper->dropDatabase(static::TEST_DATABASE_DATALATOR_FEATURE_ONE);
+        static::$databaseHelper->dropDatabase(static::TEST_DATABASE_DATALATOR);
+        static::$databaseHelper->dropDatabase(static::TEST_DATABASE_DATALATOR_FEATURE_ONE);
     }
 
     protected static function setupDatabaseHelper(): void
     {
-        if (static::$testDatabaseHelper === null) {
+        if (static::$databaseHelper === null) {
             $configurator = (new LoaderConfigurator())
                 ->setSchema('default')
                 ->setData('default')
                 ->setSchemaPath(static::SCHEMA_PATH)
                 ->setDataPath(static::DATA_PATH);
 
-            static::$testDatabaseHelper = new TestDatabaseHelper();
-            static::$testDatabaseHelper->setFactory(new DatalatorFactoryStub());
-            static::$testDatabaseHelper->setConfigurator($configurator);
+            static::$databaseHelper = new TestDatabaseHelper();
+            static::$databaseHelper->setFactory(new DatalatorFactoryStub());
+            static::$databaseHelper->setConfigurator($configurator);
         }
     }
 
@@ -94,74 +83,68 @@ class TestPopulatorHelper extends TestCase
             ->setIdentityValue(1)
             ->setQueryColumn('value');
 
-        $defaultReaderConfigurator = (new LoaderConfigurator())
-            ->setSchema('default')
-            ->setData('default')
-            ->setSchemaPath(static::SCHEMA_PATH)
-            ->setDataPath(static::DATA_PATH);
-
-        $featureOneReaderConfigurator = (new LoaderConfigurator())
-            ->setSchema('default-feature-one')
-            ->setData('default-feature-one')
-            ->setSchemaPath(static::SCHEMA_PATH)
-            ->setDataPath(static::DATA_PATH);
-
         $this->factory = new DatalatorFactoryStub();
-
-        $this->defaultDatabaseReader = $this->factory->createDatabaseReader($defaultReaderConfigurator);
-        $this->featureOneDatabaseReader = $this->factory->createDatabaseReader($featureOneReaderConfigurator);
-
-        $this->testPopulator = new TestDatabasePopulator();
-        $this->testPopulator->setFactory($this->factory);
     }
 
     protected function tearDown()
     {
-        $this->testPopulator->rollback();
+        $this->databasePopulator->rollback();
     }
 
     public function testPopulate(): void
     {
-        $this->testPopulator
+        $this->databasePopulator = new TestPopulatorHelper();
+        $this->databasePopulator->setFactory($this->factory);
+
+        $this->databasePopulator
             ->useSchemaName('default')
             ->useDataName('default')
             ->useSchemaPath(static::SCHEMA_PATH)
             ->useDataPath(static::DATA_PATH)
             ->populate();
 
-        $value = $this->testPopulator->readValue($this->readerConfiguratorFooOne);
+        $value = $this->databasePopulator->readValue($this->readerConfiguratorFooOne);
         $this->assertEquals('foo-one', $value->getDatabaseValue());
     }
 
     public function testPopulateFeatureOne(): void
     {
-        $this->testPopulator
+        $this->databasePopulator = new TestPopulatorHelper();
+        $this->databasePopulator->setFactory($this->factory);
+
+        $this->databasePopulator
             ->useSchemaName('default-feature-one')
             ->useDataName('default-feature-one')
             ->useSchemaPath(static::SCHEMA_PATH)
             ->useDataPath(static::DATA_PATH)
             ->populate();
 
-        $value = $this->testPopulator->readValue($this->readerConfiguratorBuzz);
+        $value = $this->databasePopulator->readValue($this->readerConfiguratorBuzz);
         $this->assertEquals('Buzz', $value->getDatabaseValue());
     }
 
     public function testReadFromDatabase(): void
     {
-        $this->testPopulator
+        $this->databasePopulator = new TestPopulatorHelper();
+        $this->databasePopulator->setFactory($this->factory);
+
+        $this->databasePopulator
             ->useSchemaName('default')
             ->useDataName('default')
             ->useSchemaPath(static::SCHEMA_PATH)
             ->useDataPath(static::DATA_PATH)
             ->populate();
 
-        $value = $this->testPopulator->readValue($this->readerConfiguratorFooOne);
+        $value = $this->databasePopulator->readValue($this->readerConfiguratorFooOne);
         $this->assertEquals('foo-one', $value->getDatabaseValue());
     }
 
     public function testReadDataByIdentityValue(): void
     {
-        $this->testPopulator
+        $this->databasePopulator = new TestPopulatorHelper();
+        $this->databasePopulator->setFactory($this->factory);
+
+        $this->databasePopulator
             ->useSchemaName('default')
             ->useDataName('default')
             ->useSchemaPath(static::SCHEMA_PATH)
@@ -174,14 +157,17 @@ class TestPopulatorHelper extends TestCase
             ->setIdentityColumn('foo_one_key')
             ->setQueryColumn('foo_one_value');
 
-        $value = $this->testPopulator->readValue($readerConfigurator);
+        $value = $this->databasePopulator->readValue($readerConfigurator);
 
         $this->assertEquals('Foo One', $value->getDatabaseValue());
     }
 
     public function testReadDataShouldReturnNullIfIdentityValueIsNotDefinedInDataSource(): void
     {
-        $this->testPopulator
+        $this->databasePopulator = new TestPopulatorHelper();
+        $this->databasePopulator->setFactory($this->factory);
+
+        $this->databasePopulator
             ->useSchemaName('default')
             ->useDataName('default')
             ->useSchemaPath(static::SCHEMA_PATH)
@@ -193,62 +179,71 @@ class TestPopulatorHelper extends TestCase
             ->setIdentityValue('INVALID')
             ->setQueryColumn('foo_one_key');
 
-        $value = $this->testPopulator->readValue($readerConfigurator);
+        $value = $this->databasePopulator->readValue($readerConfigurator);
 
         $this->assertNull($value->getDatabaseValue());
     }
 
     public function testPopulateWithRollback(): void
     {
-        $this->testPopulator
+        $this->databasePopulator = new TestPopulatorHelper();
+        $this->databasePopulator->setFactory($this->factory);
+
+        $this->databasePopulator
             ->useSchemaName('default')
             ->useDataName('default')
             ->useSchemaPath(static::SCHEMA_PATH)
             ->useDataPath(static::DATA_PATH)
             ->populate();
 
-        $value = $this->testPopulator->readValue($this->readerConfiguratorFooOne);
+        $value = $this->databasePopulator->readValue($this->readerConfiguratorFooOne);
         $this->assertEquals('foo-one', $value->getDatabaseValue());
 
-        $this->testPopulator->rollback();
+        $this->databasePopulator->rollback();
 
-        $value = $this->testPopulator->readValue($this->readerConfiguratorFooOne);
+        $value = $this->databasePopulator->readValue($this->readerConfiguratorFooOne);
         $this->assertNull($value->getDatabaseValue());
     }
 
     public function testPopulateWithCommit(): void
     {
-        $this->testPopulator
+        $this->databasePopulator = new TestPopulatorHelper();
+        $this->databasePopulator->setFactory($this->factory);
+
+        $this->databasePopulator
             ->useSchemaName('default')
             ->useDataName('default')
             ->useSchemaPath(static::SCHEMA_PATH)
             ->useDataPath(static::DATA_PATH)
             ->populate();
 
-        $value = $this->testPopulator->readValue($this->readerConfiguratorFooOne);
+        $value = $this->databasePopulator->readValue($this->readerConfiguratorFooOne);
         $this->assertEquals('foo-one', $value->getDatabaseValue());
 
-        $this->testPopulator->commit();
+        $this->databasePopulator->commit();
 
-        $value = $this->testPopulator->readValue($this->readerConfiguratorFooOne);
+        $value = $this->databasePopulator->readValue($this->readerConfiguratorFooOne);
         $this->assertEquals('foo-one', $value->getDatabaseValue());
     }
 
     public function testPopulateWithCommitFeatureOne(): void
     {
-        $this->testPopulator
+        $this->databasePopulator = new TestPopulatorHelper();
+        $this->databasePopulator->setFactory($this->factory);
+
+        $this->databasePopulator
             ->useSchemaName('default-feature-one')
             ->useDataName('default-feature-one')
             ->useSchemaPath(static::SCHEMA_PATH)
             ->useDataPath(static::DATA_PATH)
             ->populate();
 
-        $value = $this->testPopulator->readValue($this->readerConfiguratorBuzz);
+        $value = $this->databasePopulator->readValue($this->readerConfiguratorBuzz);
         $this->assertEquals('Buzz', $value->getDatabaseValue());
 
-        $this->testPopulator->commit();
+        $this->databasePopulator->commit();
 
-        $value = $this->testPopulator->readValue($this->readerConfiguratorBuzz);
+        $value = $this->databasePopulator->readValue($this->readerConfiguratorBuzz);
         $this->assertEquals('Buzz', $value->getDatabaseValue());
     }
 }

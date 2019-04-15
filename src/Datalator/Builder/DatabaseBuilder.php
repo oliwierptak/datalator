@@ -122,11 +122,6 @@ class DatabaseBuilder implements DatabaseBuilderInterface
         $this->logger->info($this->formatInfo($info));
     }
 
-    protected function debug(string $info): void
-    {
-        $this->logger->debug($this->formatInfo($info));
-    }
-
     protected function formatInfo(string $info): string
     {
         return \sprintf(

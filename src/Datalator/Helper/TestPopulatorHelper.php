@@ -9,7 +9,7 @@ use Datalator\Popo\ReaderValue;
 use Datalator\Populator\DatabaseCreatorInterface;
 use Datalator\Populator\DatabasePopulatorInterface;
 
-class TestDatabasePopulator
+class TestPopulatorHelper
 {
     use TraitHelper;
 
@@ -26,12 +26,12 @@ class TestDatabasePopulator
     /**
      * @var \Doctrine\DBAL\Connection
      */
-    protected $connectionCreate;
+    protected $connectionCreator;
 
     /**
      * @var \Doctrine\DBAL\Connection
      */
-    protected $connectionPopulate;
+    protected $connectionPopulator;
 
     /**
      * @var \Datalator\Loader\DataLoaderInterface
@@ -42,11 +42,6 @@ class TestDatabasePopulator
      * @var \Datalator\Reader\ReaderInterface
      */
     protected $databaseReader;
-
-    /**
-     * @var \Datalator\Populator\DatabaseCreatorInterface
-     */
-    protected $databaseCreator;
 
     protected function build(): self
     {
@@ -59,13 +54,14 @@ class TestDatabasePopulator
         $this->schemaLoader = $this->getFactory()->createSchemaLoader();
         $this->schemaConfigurator = $this->schemaLoader->load($this->configurator);
 
-        $this->connectionCreate = $this->getFactory()->createConnection($this->configurator, false);
-        $this->connectionPopulate = $this->getFactory()->createConnection($this->configurator, true);
+        $this->connectionCreator = $this->getFactory()->createConnection($this->configurator, false);
+        $this->connectionPopulator = $this->getFactory()->createConnection($this->configurator, true);
 
         $this->dataLoader = $this->getFactory()->createCsvDataLoader();
 
-        $this->databaseReader = $this->getFactory()->createDatabaseReaderFromConnection($this->connectionPopulate);
-        $this->databaseCreator = $this->getFactory()->createDatabaseCreator($this->connectionCreate, $this->schemaConfigurator);
+        $this->databaseReader = $this->getFactory()->createDatabaseReaderFromConnection(
+            $this->connectionPopulator
+        );
 
         $this->done();
 
@@ -75,7 +71,7 @@ class TestDatabasePopulator
     protected function buildDatabaseCreator(): DatabaseCreatorInterface
     {
         return $this->getFactory()->createDatabaseCreator(
-            $this->connectionCreate,
+            $this->connectionCreator,
             $this->schemaConfigurator
         );
     }
@@ -83,7 +79,7 @@ class TestDatabasePopulator
     protected function buildDatabasePopulator(): DatabasePopulatorInterface
     {
         return $this->getFactory()->createDatabasePopulator(
-            $this->connectionPopulate,
+            $this->connectionPopulator,
             $this->schemaConfigurator
         );
     }
@@ -99,10 +95,8 @@ class TestDatabasePopulator
     {
         $this->build();
 
-        $this->databaseCreator->dropDatabase();
-        $this->databaseCreator->createDatabase();
-
-        //$this->connectionPopulate = $this->getFactory()->createConnection($this->configurator, true);
+        $this->buildDatabaseCreator()->dropDatabase();
+        $this->buildDatabaseCreator()->createDatabase();
 
         $this
             ->buildDatabasePopulator()
@@ -110,7 +104,7 @@ class TestDatabasePopulator
 
         $data = $this->dataLoader->load($this->configurator);
 
-        $this->connectionPopulate->beginTransaction();
+        $this->connectionPopulator->beginTransaction();
 
         $this
             ->buildDatabasePopulator()
@@ -122,24 +116,12 @@ class TestDatabasePopulator
         return $this;
     }
 
-    public function begin(): self
-    {
-        $this->build();
-
-        if ($this->connectionPopulate->isConnected() && !$this->connectionPopulate->isTransactionActive()) {
-            $this->connectionPopulate->beginTransaction();
-        }
-
-
-        return $this;
-    }
-
     public function rollback(): self
     {
         $this->build();
 
-        if ($this->connectionPopulate->isConnected() && $this->connectionPopulate->isTransactionActive()) {
-            $this->connectionPopulate->rollBack();
+        if ($this->connectionPopulator->isConnected() && $this->connectionPopulator->isTransactionActive()) {
+            $this->connectionPopulator->rollBack();
         }
 
         return $this;
@@ -149,8 +131,8 @@ class TestDatabasePopulator
     {
         $this->build();
 
-        if ($this->connectionPopulate->isConnected() && $this->connectionPopulate->isTransactionActive()) {
-            $this->connectionPopulate->commit();
+        if ($this->connectionPopulator->isConnected() && $this->connectionPopulator->isTransactionActive()) {
+            $this->connectionPopulator->commit();
         }
 
 

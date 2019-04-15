@@ -14,12 +14,17 @@ You could use `setUp` of phpunit to instantiate your own database populator.
 ```
 protected function setUp()
 {
-    $this->databasePopulator = (new Datalator\Helper\TestPopulator())
+    $this->databasePopulator = (new Datalator\Helper\TestPopulatorHelper())
         ->useSchemaName('default')
         ->useDataName('default')
         ->useSchemaPath('path/to/schema')
         ->useDataPath('path/to/data')
         ->populate();
+}
+
+protected function tearDown()
+{
+    $this->databasePopulator->rollback();
 }
 ```
 
