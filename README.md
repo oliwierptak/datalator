@@ -8,9 +8,7 @@ Datalator - very simple test database populator.
 
 ## Usage
 
-### Test Populator Helper
-
-#### Usage
+### Usage in tests
 
 ```
 protected function setUp()
@@ -29,9 +27,13 @@ protected function tearDown()
 }
 ```
 
-
-Note: `dumpConfiguratorInstance()` is useful if you want to extend or import other modules.
-See [DatalatorFacadeTest](tests/Datalator/DatalatorFacadeTest.php) for more examples.
+### Usage from command line
+```
+ vendor/bin/datalator 
+  create    Create the test database. The database will dropped if it exists.
+  drop      Drop the test database if it exists.
+  populate  Populate the test database. The database will created / dropped if needed.
+ ```
 
 
 ### Configuration
@@ -47,17 +49,10 @@ dataPath = data/
 ; modules[] = module2 ;
 ```
 Or you can specify all options from the command line.
-
-### Usage
-```
- vendor/bin/datalator 
-  create    Create the test database. The database will dropped if it exists.
-  drop      Drop the test database if it exists.
-  populate  Populate the test database. The database will created / dropped if needed.
- ```
  
 ## Data Reader
-Select by identity column (default is `id`).
+Query `foo_one` table, use field `id` (default identity value) with value `1`, return value for `foo_one_key` column.
+
 ```
 $readerConfigurator = (new ReaderConfigurator())
     ->setSource('foo_one')
@@ -69,7 +64,7 @@ $value = $this->databasePopulator->readValue($readerConfigurator);s
 $this->assertEquals('foo-one', $value->getSchemaValue());
 ```
 
-Change identity column to `foo_one_key`.
+Query `foo_one` table, use field `foo_one_key` with value `foo-one`, return value for `foo_one_value` column.
 ```
 $readerConfigurator = (new ReaderConfigurator())
     ->setSource('foo_one')
