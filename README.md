@@ -8,8 +8,9 @@ Datalator - very simple test database populator.
 
 ## Usage
 
-###  Tests
-You could use `setUp` of phpunit to instantiate your own database populator.
+### Test Populator Helper
+
+#### Usage
 
 ```
 protected function setUp()
@@ -28,36 +29,7 @@ protected function tearDown()
 }
 ```
 
-#### Test Populator
-TestPopulator is a helper class that provides interface to test database population.
-It is very easy and straightforward to use. 
 
-```
-interface TestPopulatorInterface
-{
-    public function create(): TestPopulatorInterface;
-
-    public function drop(): TestPopulatorInterface;
-
-    public function populate(): TestPopulatorInterface;
-
-    public function extendWith(LoaderConfigurator $configurator): TestPopulatorInterface;
-
-    public function importFrom(array $importConfiguratorCollection): TestPopulatorInterface;
-
-    public function useSchemaName(string $schemaName): TestPopulatorInterface;
-
-    public function useSchemaPath(string $schemaPath): TestPopulatorInterface;
-
-    public function useDataName(string $dataName): TestPopulatorInterface;
-
-    public function useDataPath(string $dataPath): TestPopulatorInterface;
-
-    public function useModules(array $modules): TestPopulatorInterface;
-
-    public function dumpConfiguratorInstance(): LoaderConfigurator;
-}
-```
 Note: `dumpConfiguratorInstance()` is useful if you want to extend or import other modules.
 See [DatalatorFacadeTest](tests/Datalator/DatalatorFacadeTest.php) for more examples.
 
@@ -85,20 +57,19 @@ Or you can specify all options from the command line.
  ```
  
 ## Data Reader
-To read data from the database or the fixture file, use `readFromSchema()` and `readFromData()` methods.
-
+Select by identity column (default is `id`).
 ```
 $readerConfigurator = (new ReaderConfigurator())
     ->setSource('foo_one')
     ->setIdentityValue(1)
     ->setQueryColumn('foo_one_key');
 
-$value = $facade->readFromSchema($configurator, $readerConfigurator);
+$value = $this->databasePopulator->readValue($readerConfigurator);s
 
 $this->assertEquals('foo-one', $value->getSchemaValue());
 ```
 
-
+Change identity column to `foo_one_key`.
 ```
 $readerConfigurator = (new ReaderConfigurator())
     ->setSource('foo_one')
@@ -106,7 +77,7 @@ $readerConfigurator = (new ReaderConfigurator())
     ->setIdentityColumn('foo_one_key')
     ->setQueryColumn('foo_one_value');
 
-$value = $facade->readFromData($configurator, $readerConfigurator);
+$value = $this->databasePopulator->readValue($readerConfigurator);
 
 $this->assertEquals('Foo One', $value->getDataValue());
 ```
