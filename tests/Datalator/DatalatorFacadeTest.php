@@ -38,7 +38,7 @@ class DatalatorFacadeTest extends TestCase
      */
     protected static $databaseHelper;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         static::cleanState();
     }

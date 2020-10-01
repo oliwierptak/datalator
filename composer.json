@@ -9,26 +9,25 @@
         }
     ],
     "minimum-stability": "stable",
-    "prefer-stable": true,
+    "prefer-stable": true ,
     "require": {
-        "php": "^7.1",
+        "php": "^7.2",
         "ext-pdo": "*",
         "doctrine/dbal": "^2.7",
-        "symfony/finder": "^4.0",
-        "symfony/console": "^4.1",
-        "monolog/monolog": "^1.23"
+        "symfony/finder": "^5",
+        "symfony/console": "^5",
+        "monolog/monolog": "^2"
     },
     "require-dev": {
-        "phpunit/phpunit": "^7.0",
-        "everon/coding-standard": "^1.0",
-        "popo/generator": "^1.1",
-        "symfony/process": "^4.0",
-        "symfony/var-dumper": "^4.1"
+        "phpunit/phpunit": "^8",
+        "everon/coding-standard": "^1",
+        "popo/generator": "^2",
+        "symfony/process": "^5",
+        "symfony/var-dumper": "^5"
     },
     "autoload": {
         "psr-4": {
-            "Datalator\\": "src/Datalator",
-            "Datalator\\Popo\\": "src/Popo"
+            "Datalator\\": "src/Datalator"
         }
     },
     "autoload-dev": {
@@ -48,14 +47,5 @@
             "chmod +x bin/datalator",
             "vendor/bin/cs-setup"
         ]
-    },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../pdoo/",
-            "options": {
-                "symlink": false
-            }
-        }
-    ]
+    }
 }
