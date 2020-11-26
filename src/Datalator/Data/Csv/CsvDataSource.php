@@ -89,9 +89,9 @@ class CsvDataSource implements DataSourceInterface
     /**
      * @param array $data
      *
+     * @return array
      * @throws \UnexpectedValueException
      *
-     * @return array
      */
     protected function prepareRow(array $data): array
     {
@@ -99,7 +99,12 @@ class CsvDataSource implements DataSourceInterface
         $columnCount = \count($this->columns);
 
         if ($dataCount !== $columnCount) {
-            throw new \UnexpectedValueException('Data and column count does not match');
+            throw new \UnexpectedValueException(sprintf(
+                'Data count (%d) and column count (%d) do not match in "%s".',
+                $dataCount,
+                $columnCount,
+                $this->csvFile->getPathname()
+            ));
         }
 
         $row = \array_combine(

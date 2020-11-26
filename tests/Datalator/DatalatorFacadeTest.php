@@ -156,6 +156,28 @@ class DatalatorFacadeTest extends TestCase
         $this->assertEquals('Buzz', $value->getDatabaseValue());
     }
 
+    public function testPopulateBroken(): void
+    {
+        $this->expectException(\UnexpectedValueException::class);
+        $this->expectExceptionMessageMatches('/^Data count \(4\) and column count \(3\) do not match in (.*)$/i');
+
+        $facade = new DatalatorFacade();
+        $facade->setFactory($this->factory);
+
+        $configurator = (new LoaderConfigurator())
+            ->setSchema('default-feature-one')
+            ->setData('broken')
+            ->setSchemaPath(static::SCHEMA_PATH)
+            ->setDataPath(static::DATA_PATH);
+
+        $facade->populate($configurator);
+
+        $value = $this->factory->createDatabaseReader($configurator)
+            ->read($this->readerConfiguratorBuzz);
+
+        $this->assertEquals('Buzz', $value->getDatabaseValue());
+    }
+
     public function testImport(): void
     {
         $facade = new DatalatorFacade();

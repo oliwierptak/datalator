@@ -43,6 +43,7 @@
         "bin/datalator"
     ],
     "scripts": {
+        "tests": "vendor/bin/phpunit --testdox --no-coverage",
         "post-autoload-dump": [
             "chmod +x bin/datalator",
             "vendor/bin/cs-setup"
