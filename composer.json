@@ -20,8 +20,7 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^8",
-        "everon/coding-standard": "^1",
-        "popo/generator": "^2",
+        "popo/generator": ">=2",
         "symfony/process": "^5",
         "symfony/var-dumper": "^5"
     },
@@ -45,8 +44,7 @@
     "scripts": {
         "test": "vendor/bin/phpunit --testdox --no-coverage",
         "post-autoload-dump": [
-            "chmod +x bin/datalator",
-            "vendor/bin/cs-setup"
+            "chmod +x bin/datalator"
         ]
     }
 }
