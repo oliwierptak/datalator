@@ -50,7 +50,7 @@ abstract class AbstractDataLoader implements DataLoaderInterface
         $enabledModulesPattern = \implode('|', $configurator->requireModules());
 
         $pattern = \sprintf(
-            "@^%s/${enabledModulesPattern}/(.*)$@",
+            "@^%s/(${enabledModulesPattern})/(.*)$@",
             $configurator->requireData()
         );
 

@@ -54,8 +54,13 @@ class TestPopulatorHelper
         $this->schemaLoader = $this->getFactory()->createSchemaLoader();
         $this->schemaConfigurator = $this->schemaLoader->load($this->configurator);
 
-        $this->connectionCreator = $this->getFactory()->createConnection($this->configurator, false);
-        $this->connectionPopulator = $this->getFactory()->createConnection($this->configurator, true);
+        if ($this->connectionCreator === null) {
+            $this->connectionCreator = $this->getFactory()->createConnection($this->configurator, false);
+        }
+
+        if ($this->connectionPopulator === null) {
+            $this->connectionPopulator = $this->getFactory()->createConnection($this->configurator, true);
+        }
 
         $this->dataLoader = $this->getFactory()->createCsvDataLoader();
 

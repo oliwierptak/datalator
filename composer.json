@@ -11,7 +11,7 @@
     "minimum-stability": "stable",
     "prefer-stable": true ,
     "require": {
-        "php": "^7.2",
+        "php": ">=7.2",
         "ext-pdo": "*",
         "doctrine/dbal": "^2.7",
         "symfony/finder": "^5",
@@ -43,7 +43,7 @@
         "bin/datalator"
     ],
     "scripts": {
-        "tests": "vendor/bin/phpunit --testdox --no-coverage",
+        "test": "vendor/bin/phpunit --testdox --no-coverage",
         "post-autoload-dump": [
             "chmod +x bin/datalator",
             "vendor/bin/cs-setup"

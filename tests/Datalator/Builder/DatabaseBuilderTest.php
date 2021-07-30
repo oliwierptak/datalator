@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Tests\Datalator\Builder;
 
+use Datalator\Helper\TestDatabaseHelper;
 use Datalator\Popo\LoaderConfigurator;
 use Datalator\Popo\ReaderConfigurator;
 use PHPUnit\Framework\TestCase;
@@ -12,6 +13,9 @@ use Tests\DatalatorStub\Datalator\DatalatorFactoryStub;
 class DatabaseBuilderTest extends TestCase
 {
     const TEST_DATABASE_DATALATOR = 'test_database_datalator';
+
+    const SCHEMA_PATH = \TESTS_FIXTURE_DIR . 'database/schema/';
+    const DATA_PATH = \TESTS_FIXTURE_DIR . 'database/data/';
 
     /**
      * @var string
@@ -38,6 +42,38 @@ class DatabaseBuilderTest extends TestCase
      */
     protected $factory;
 
+    /**
+     * @var TestDatabaseHelper
+     */
+    protected static $databaseHelper;
+
+    public static function setUpBeforeClass(): void
+    {
+        static::cleanState();
+    }
+
+    protected static function cleanState(): void
+    {
+        self::setupDatabaseHelper();
+
+        static::$databaseHelper->dropDatabase(static::TEST_DATABASE_DATALATOR);
+    }
+
+    protected static function setupDatabaseHelper(): void
+    {
+        if (static::$databaseHelper === null) {
+            $configurator = (new LoaderConfigurator())
+                ->setSchema('default')
+                ->setData('default')
+                ->setSchemaPath(static::SCHEMA_PATH)
+                ->setDataPath(static::DATA_PATH);
+
+            static::$databaseHelper = new TestDatabaseHelper();
+            static::$databaseHelper->setFactory(new DatalatorFactoryStub());
+            static::$databaseHelper->setConfigurator($configurator);
+        }
+    }
+
     protected function setUp(): void
     {
         $this->schemaDir = \TESTS_FIXTURE_DIR. 'database/schema/';
@@ -54,6 +90,8 @@ class DatabaseBuilderTest extends TestCase
             ->setQueryColumn('value');
 
         $this->factory = new DatalatorFactoryStub();
+
+        static::cleanState();
     }
 
     public function testCreate(): void

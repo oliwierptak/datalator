@@ -14,12 +14,10 @@ class DatabaseCreator implements DatabaseCreatorInterface
      * @var \Doctrine\DBAL\Connection
      */
     protected $databaseConnection;
-
     /**
      * @var \Datalator\Popo\SchemaConfigurator
      */
     protected $schemaConfigurator;
-
     /**
      * @var \Psr\Log\LoggerInterface
      */
@@ -42,6 +40,11 @@ class DatabaseCreator implements DatabaseCreatorInterface
         }
 
         $name = $this->resolveDatabaseName();
+        $name = $this
+            ->getConnection()
+            ->getSchemaManager()
+            ->getDatabasePlatform()
+            ->quoteSingleIdentifier($name);
 
         $this->getConnection()->getSchemaManager()->createDatabase(
             $name
@@ -57,6 +60,11 @@ class DatabaseCreator implements DatabaseCreatorInterface
         }
 
         $name = $this->resolveDatabaseName();
+        $name = $this
+            ->getConnection()
+            ->getSchemaManager()
+            ->getDatabasePlatform()
+            ->quoteSingleIdentifier($name);
 
         $this->getConnection()->getSchemaManager()->dropDatabase(
             $name
@@ -74,7 +82,8 @@ class DatabaseCreator implements DatabaseCreatorInterface
                 $name,
                 $this->getConnection()->getSchemaManager()->listDatabases()
             );
-        } catch (\Throwable $e) {
+        }
+        catch (\Throwable $e) {
             return false;
         }
     }
@@ -109,11 +118,9 @@ class DatabaseCreator implements DatabaseCreatorInterface
 
     protected function resolveDatabaseName(): string
     {
-        $name = $this->schemaConfigurator
+        return $this->schemaConfigurator
             ->requireDatabaseConfigurator()
             ->requireConnection()
             ->requireDbname();
-
-        return $name;
     }
 }
